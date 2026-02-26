@@ -28,7 +28,7 @@ import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
     private static final int START_POOL_SIZE = 8;
-    private static final double PERCENT_UNTIL_REORDER = 0.3;
+    private static final double REORDER_POWER_SCALE = 0.75;
     private static final double CONFIDENCE_COEFFICIENT = 1;
     private static final double CONFIDENCE_GROWTH_THRESHOLD = .5;
     private static final double CONFIDENCE_RANDOMNESS = .4;
@@ -51,12 +51,12 @@ public class MainActivity extends AppCompatActivity {
     private List<Foreign> foreignReserves;
     private List<Native> nativeReserves;
     private List<WordWrapper> pool;
-    private int poolSize;
 
     private boolean front = true;
     private int wordIndex = 0;
     private int streak = 0;
     private int wordsSinceReorder = 0;
+    private long reorderCount = 0;
 
     private void init() {
         DictionaryDatabase db = Room.databaseBuilder(
@@ -163,7 +163,7 @@ public class MainActivity extends AppCompatActivity {
                         (word.getDaysSinceModified() * (CONFIDENCE_COEFFICIENT / pool.size()))
         );
         if (randomness) {
-            long seed = word.getModified() + pool.size() + streak;
+            long seed = word.getModified() + reorderCount;
             confidence += ((new Random(seed)).nextDouble() - 0.5) * CONFIDENCE_RANDOMNESS;
         }
         return confidence;
@@ -226,7 +226,7 @@ public class MainActivity extends AppCompatActivity {
         this.pool.get(wordIndex).attempt(dao, correct);
         this.wordIndex = (wordIndex + 1) % this.pool.size();
         this.wordsSinceReorder++;
-        if (wordsSinceReorder > (pool.size() * PERCENT_UNTIL_REORDER)) {
+        if (wordsSinceReorder > Math.pow(pool.size(), REORDER_POWER_SCALE)) {
             this.reorder();
         }
         this.setup();
@@ -239,6 +239,7 @@ public class MainActivity extends AppCompatActivity {
         );
         this.wordIndex = 0;
         this.wordsSinceReorder = 0;
+        this.reorderCount = (reorderCount + 1) % (Long.MAX_VALUE - 1);
     }
 
     private boolean growPool() {
