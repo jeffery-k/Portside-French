@@ -163,7 +163,7 @@ public class MainActivity extends AppCompatActivity {
                         (word.getDaysSinceModified() * (CONFIDENCE_COEFFICIENT / pool.size()))
         );
         if (randomness) {
-            long seed = word.getModified() + reorderCount;
+            long seed = word.getModified() + pool.size() + reorderCount;
             confidence += ((new Random(seed)).nextDouble() - 0.5) * CONFIDENCE_RANDOMNESS;
         }
         return confidence;
