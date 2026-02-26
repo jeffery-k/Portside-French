@@ -27,10 +27,11 @@ import java.util.Map;
 import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
-    private static final int START_POOL_SIZE = 10;
-    private static final int WORDS_UNTIL_REORDER = 10;
+    private static final int START_POOL_SIZE = 8;
+    private static final double PERCENT_UNTIL_REORDER = 0.3;
     private static final double CONFIDENCE_COEFFICIENT = 1;
     private static final double CONFIDENCE_GROWTH_THRESHOLD = .5;
+    private static final double CONFIDENCE_RANDOMNESS = .4;
 
     private DictionaryDao dao;
 
@@ -138,8 +139,9 @@ public class MainActivity extends AppCompatActivity {
     private void setup() {
         this.front = true;
         while (getConfidence() >= CONFIDENCE_GROWTH_THRESHOLD) {
-            this.growPool();
-            Toast.makeText(this, "Growing Pool!", Toast.LENGTH_SHORT).show();
+            if (this.growPool()) {
+                Toast.makeText(this, "Growing Pool!", Toast.LENGTH_SHORT).show();
+            }
         }
 
         this.streakView.setText("Streak: " + streak);
@@ -150,16 +152,21 @@ public class MainActivity extends AppCompatActivity {
     private double getConfidence() {
         double totalConfidence = 0;
         for (WordWrapper word : pool) {
-            totalConfidence += getConfidence(word);
+            totalConfidence += getConfidence(word, false);
         }
         return totalConfidence / pool.size();
     }
 
-    private double getConfidence(WordWrapper word) {
-        return (
+    private double getConfidence(WordWrapper word, boolean randomness) {
+        double confidence = (
                 word.getSuccess() -
                         (word.getDaysSinceModified() * (CONFIDENCE_COEFFICIENT / pool.size()))
         );
+        if (randomness) {
+            long seed = word.getModified() + pool.size() + streak;
+            confidence += ((new Random(seed)).nextDouble() - 0.5) * CONFIDENCE_RANDOMNESS;
+        }
+        return confidence;
     }
 
     private void flip() {
@@ -219,7 +226,7 @@ public class MainActivity extends AppCompatActivity {
         this.pool.get(wordIndex).attempt(dao, correct);
         this.wordIndex = (wordIndex + 1) % this.pool.size();
         this.wordsSinceReorder++;
-        if (wordsSinceReorder >= WORDS_UNTIL_REORDER) {
+        if (wordsSinceReorder > (pool.size() * PERCENT_UNTIL_REORDER)) {
             this.reorder();
         }
         this.setup();
@@ -228,24 +235,36 @@ public class MainActivity extends AppCompatActivity {
     private void reorder() {
         this.pool.sort(
                 (word1, word2) ->
-                        (int) ((getConfidence(word1) - getConfidence(word2)) * 100)
+                        (int) ((getConfidence(word1, true) - getConfidence(word2, true)) * 100)
         );
         this.wordIndex = 0;
         this.wordsSinceReorder = 0;
     }
 
-    private void growPool() {
+    private boolean growPool() {
+        boolean grown = false;
         Random random = new Random();
-        int foreignIndex = random.nextInt(foreignReserves.size());
-        Foreign foreignWord = foreignReserves.get(foreignIndex);
-        foreignReserves.remove(foreignIndex);
-        int nativeIndex = random.nextInt(nativeReserves.size());
-        Native nativeWord = nativeReserves.get(nativeIndex);
-        nativeReserves.remove(nativeIndex);
 
-        this.pool.add(new WordWrapper(foreignWord));
-        this.pool.add(new WordWrapper(nativeWord));
-        this.reorder();
+        if (!foreignReserves.isEmpty()) {
+            int foreignIndex = random.nextInt(foreignReserves.size());
+            Foreign foreignWord = foreignReserves.get(foreignIndex);
+            foreignReserves.remove(foreignIndex);
+            this.pool.add(new WordWrapper(foreignWord));
+            grown = true;
+        }
+
+        if (!nativeReserves.isEmpty()) {
+            int nativeIndex = random.nextInt(nativeReserves.size());
+            Native nativeWord = nativeReserves.get(nativeIndex);
+            nativeReserves.remove(nativeIndex);
+            this.pool.add(new WordWrapper(nativeWord));
+            grown = true;
+        }
+
+        if (grown) {
+            this.reorder();
+        }
+        return grown;
     }
 
     @Override

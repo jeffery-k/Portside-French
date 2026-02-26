@@ -67,6 +67,11 @@ public class WordWrapper {
         return (System.currentTimeMillis() - modified) / (1000.0 * 60 * 60 * 24);
     }
 
+    public long getModified() {
+        Long modified = foreignWord != null? foreignWord.modified : nativeWord.modified;
+        return modified != null ? modified : 0;
+    }
+
     public boolean isForeign() {
         return foreignWord != null;
     }
