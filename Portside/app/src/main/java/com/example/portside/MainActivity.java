@@ -28,10 +28,12 @@ import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
     private static final int START_POOL_SIZE = 8;
-    private static final double REORDER_POWER_SCALE = 0.75;
+    private static final double REORDER_POWER_SCALE = 0.7;
     private static final double CONFIDENCE_COEFFICIENT = 1;
     private static final double CONFIDENCE_GROWTH_THRESHOLD = .5;
-    private static final double CONFIDENCE_RANDOMNESS = .4;
+    private static final double CONFIDENCE_RANDOMNESS = 1;
+    private static final int INCORRECT_SHIFT_MINIMUM = 5;
+    private static final int INCORRECT_SHIFT_MAXIMUM = 10;
 
     private DictionaryDao dao;
 
@@ -57,6 +59,7 @@ public class MainActivity extends AppCompatActivity {
     private int streak = 0;
     private int wordsSinceReorder = 0;
     private long reorderCount = 0;
+    private String history = "0000000000";
 
     private void init() {
         DictionaryDatabase db = Room.databaseBuilder(
@@ -164,7 +167,8 @@ public class MainActivity extends AppCompatActivity {
         );
         if (randomness) {
             long seed = word.getModified() + pool.size() + reorderCount;
-            confidence += ((new Random(seed)).nextDouble() - 0.5) * CONFIDENCE_RANDOMNESS;
+            confidence += ((new Random(seed)).nextDouble() - 0.5) *
+                    (CONFIDENCE_RANDOMNESS / ((AttemptsHelper.getSuccess(history) * 10) + 1));
         }
         return confidence;
     }
@@ -222,9 +226,23 @@ public class MainActivity extends AppCompatActivity {
         } else {
             this.streak = 0;
         }
+        this.history = AttemptsHelper.createUpdatedAttempts(history, correct);
 
         this.pool.get(wordIndex).attempt(dao, correct);
+        if (!correct) {
+            int moveIndex = (
+                    wordIndex +
+                            (new Random()).nextInt(
+                                    INCORRECT_SHIFT_MAXIMUM - INCORRECT_SHIFT_MINIMUM
+                            ) +
+                            INCORRECT_SHIFT_MINIMUM
+            );
+            moveIndex = Math.min(moveIndex, pool.size());
+            this.pool.add(moveIndex, pool.get(wordIndex));
+            this.pool.remove(wordIndex);
+        }
         this.wordIndex = (wordIndex + 1) % this.pool.size();
+
         this.wordsSinceReorder++;
         if (wordsSinceReorder > Math.pow(pool.size(), REORDER_POWER_SCALE)) {
             this.reorder();
