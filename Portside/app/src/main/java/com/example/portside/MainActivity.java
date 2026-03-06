@@ -240,8 +240,9 @@ public class MainActivity extends AppCompatActivity {
             moveIndex = Math.min(moveIndex, pool.size());
             this.pool.add(moveIndex, pool.get(wordIndex));
             this.pool.remove(wordIndex);
+        } else {
+            this.wordIndex = (wordIndex + 1) % this.pool.size();
         }
-        this.wordIndex = (wordIndex + 1) % this.pool.size();
 
         this.wordsSinceReorder++;
         if (wordsSinceReorder > Math.pow(pool.size(), REORDER_POWER_SCALE)) {
@@ -253,7 +254,12 @@ public class MainActivity extends AppCompatActivity {
     private void reorder() {
         this.pool.sort(
                 (word1, word2) ->
-                        (int) ((getConfidence(word1, true) - getConfidence(word2, true)) * 100)
+                        (int) (
+                                (
+                                        getConfidence(word1, true) -
+                                                getConfidence(word2, true)
+                                ) * 100
+                        )
         );
         this.wordIndex = 0;
         this.wordsSinceReorder = 0;
