@@ -303,6 +303,8 @@ public class MainActivity extends AppCompatActivity {
                 ).show();
             }
         }
+
+        this.submissionText.setText("");
     }
 
     private void reorder() {
