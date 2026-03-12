@@ -1,9 +1,17 @@
 package com.example.portside;
 
+import android.graphics.Color;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -11,12 +19,15 @@ import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.core.view.WindowInsetsControllerCompat;
 import androidx.room.Room;
 
 import com.example.portside.dictionary.DictionaryDao;
 import com.example.portside.dictionary.DictionaryDatabase;
 import com.example.portside.dictionary.Foreign;
+import com.example.portside.dictionary.Gender;
 import com.example.portside.dictionary.Meaning;
 import com.example.portside.dictionary.Native;
 
@@ -34,16 +45,21 @@ public class MainActivity extends AppCompatActivity {
     private static final double CONFIDENCE_RANDOMNESS = 1;
     private static final int INCORRECT_SHIFT_MINIMUM = 5;
     private static final int INCORRECT_SHIFT_MAXIMUM = 10;
+    private static final int CORRECT_COLOR = Color.rgb(10, 120, 40);
+    private static final int INCORRECT_COLOR = Color.rgb(120, 10, 40);
 
     private DictionaryDao dao;
 
-    private View flipView;
-    private TextView sideView;
+    private View nextView;
+    private TextView correctView;
     private TextView wordView;
     private TextView streakView;
     private TextView poolView;
-    private Button correctButton;
-    private Button wrongButton;
+    private ScrollView translationsView;
+    private LinearLayout translationsLayout;
+    private RadioGroup genderGroup;
+    private RadioButton neuterButton;
+    private EditText submissionText;
 
     private List<Foreign> allForeigns;
     private List<Native> allNatives;
@@ -53,8 +69,8 @@ public class MainActivity extends AppCompatActivity {
     private List<Foreign> foreignReserves;
     private List<Native> nativeReserves;
     private List<WordWrapper> pool;
+    private List<Meaning> matches;
 
-    private boolean front = true;
     private int wordIndex = 0;
     private int streak = 0;
     private int wordsSinceReorder = 0;
@@ -75,6 +91,7 @@ public class MainActivity extends AppCompatActivity {
         this.foreignReserves = new ArrayList<>();
         this.nativeReserves = new ArrayList<>();
         this.pool = new ArrayList<>();
+        this.matches = new ArrayList<>();
 
         for (Meaning meaning : allMeanings) {
             if (!foreignMeanings.containsKey(meaning.foreignWord)) {
@@ -107,31 +124,35 @@ public class MainActivity extends AppCompatActivity {
             this.growPool();
         }
 
-        this.flipView = findViewById(R.id.flip);
-        this.sideView = findViewById(R.id.side);
+        this.nextView = findViewById(R.id.next);
+        this.correctView = findViewById(R.id.correct);
         this.wordView = findViewById(R.id.word);
         this.streakView = findViewById(R.id.streak);
         this.poolView = findViewById(R.id.pool);
-        this.correctButton = findViewById(R.id.correct);
-        this.wrongButton = findViewById(R.id.wrong);
+        this.translationsView = findViewById(R.id.translations);
+        this.translationsLayout = findViewById(R.id.translations_text);
+        this.genderGroup = findViewById(R.id.gender);
+        this.neuterButton = findViewById(R.id.neuter);
+        this.submissionText = findViewById(R.id.submission);
 
-        this.flipView.setOnTouchListener(
+        this.submissionText.setOnEditorActionListener((v, actionId, event) -> {
+            if (
+                    actionId == EditorInfo.IME_ACTION_DONE &&
+                            correctView.getVisibility() != View.VISIBLE
+            ) {
+                this.submit(v.getText().toString(), getSelectedGender());
+                return true;
+            }
+            return false;
+        });
+
+        this.nextView.setOnTouchListener(
                 (v, event) -> {
                     if (event.getAction() == MotionEvent.ACTION_UP) {
                         v.performClick();
-                        this.flip();
+                        this.next(getWordMeanings().size() == matches.size());
                     }
                     return true;
-                }
-        );
-        this.correctButton.setOnClickListener(
-                (v) -> {
-                    this.next(true);
-                }
-        );
-        this.wrongButton.setOnClickListener(
-                (v) -> {
-                    this.next(false);
                 }
         );
 
@@ -140,89 +161,74 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setup() {
-        this.front = true;
         while (getConfidence() >= CONFIDENCE_GROWTH_THRESHOLD) {
             if (this.growPool()) {
                 Toast.makeText(this, "Growing Pool!", Toast.LENGTH_SHORT).show();
             }
         }
+        this.matches.clear();
 
-        this.streakView.setText("Streak: " + streak);
-        this.poolView.setText("Pool: " + pool.size());
-        this.showFront();
-    }
+        this.streakView.setText(String.format("Streak: %d", streak));
+        this.poolView.setText(String.format("Pool: %d", pool.size()));
 
-    private double getConfidence() {
-        double totalConfidence = 0;
-        for (WordWrapper word : pool) {
-            totalConfidence += getConfidence(word, false);
-        }
-        return totalConfidence / pool.size();
-    }
+        this.correctView.setVisibility(View.INVISIBLE);
+        this.translationsView.setVisibility(View.INVISIBLE);
+        this.translationsLayout.removeAllViews();
+        this.genderGroup.setVisibility(View.VISIBLE);
+        this.neuterButton.setChecked(true);
+        this.submissionText.setVisibility(View.VISIBLE);
+        this.submissionText.setText("");
+        this.submissionText.requestFocus();
 
-    private double getConfidence(WordWrapper word, boolean randomness) {
-        double confidence = (
-                word.getSuccess() -
-                        (word.getDaysSinceModified() * (CONFIDENCE_COEFFICIENT / pool.size()))
-        );
-        if (randomness) {
-            long seed = word.getModified() + pool.size() + reorderCount;
-            confidence += ((new Random(seed)).nextDouble() - 0.5) *
-                    (CONFIDENCE_RANDOMNESS / ((AttemptsHelper.getSuccess(history) * 10) + 1));
-        }
-        return confidence;
-    }
+        WordWrapper word = this.pool.get(wordIndex);
+        String languageIndicator = word.isForeign() ? "(fr.)" : "(en.)";
+        this.wordView.setText(String.format("%s\n%s", word.getWord(), languageIndicator));
 
-    private void flip() {
-        this.front = !front;
-        if (front) {
-            this.showFront();
-        } else {
-            this.showBack();
-        }
-    }
-
-    private void showFront() {
-        this.sideView.setText("Front");
-        WordWrapper word = pool.get(wordIndex);
-        this.wordView.setText(
-                word.getWord() + (word.isForeign() ? "\n(fr.)" : "\n(eng.)")
-        );
-        this.correctButton.setVisibility(View.GONE);
-        this.wrongButton.setVisibility(View.GONE);
+        WindowInsetsControllerCompat controller =
+                WindowCompat.getInsetsController(getWindow(), submissionText);
+        controller.show(WindowInsetsCompat.Type.ime());
     }
 
     private void showBack() {
-        this.sideView.setText("Back");
-        WordWrapper word = pool.get(wordIndex);
-        List<Meaning> meanings = word.isForeign() ?
-                foreignMeanings.get(word.getWord()) : nativeMeanings.get(word.getWord());
-        StringBuilder text = new StringBuilder();
-        for (int i = 0; i < meanings.size(); i++) {
-            Meaning meaning = meanings.get(i);
-            if (i != 0) {
-                text.append("\n\n");
-            }
-            text.append(meaning.part).append("\n");
-            text.append(word.isForeign() ? meaning.nativeWord : meaning.foreignWord);
+        this.correctView.setVisibility(View.VISIBLE);
+        this.translationsView.setVisibility(View.VISIBLE);
+        this.genderGroup.setVisibility(View.INVISIBLE);
+        this.submissionText.setVisibility(View.INVISIBLE);
+
+        boolean correct = getWordMeanings().size() == matches.size();
+        if (correct) {
+            this.correctView.setText("Correct!");
+            this.correctView.setBackgroundColor(CORRECT_COLOR);
+        } else {
+            this.correctView.setText("Wrong");
+            this.correctView.setBackgroundColor(INCORRECT_COLOR);
         }
-        this.wordView.setText(text.toString());
-        this.correctButton.setVisibility(View.VISIBLE);
-        this.wrongButton.setVisibility(View.VISIBLE);
+
+        WordWrapper word = pool.get(wordIndex);
+        List<Meaning> meanings = getWordMeanings();
+        for (Meaning meaning : meanings) {
+            TextView meaningText = new TextView(this);
+            String translation = word.isForeign() ? meaning.nativeWord : meaning.foreignWord;
+            translation += " | " + meaning.part;
+            meaningText.setText(translation);
+            meaningText.setTextSize(18);
+            meaningText.setPadding(4, 4, 4, 12);
+            if (matches.contains(meaning)) {
+                meaningText.setBackgroundColor(CORRECT_COLOR);
+            } else {
+                meaningText.setBackgroundColor(INCORRECT_COLOR);
+            }
+            this.translationsLayout.addView(meaningText);
+        }
+
+        WindowInsetsControllerCompat controller =
+                WindowCompat.getInsetsController(getWindow(), submissionText);
+        controller.hide(WindowInsetsCompat.Type.ime());
     }
 
     private void next(boolean correct) {
         if (correct) {
             this.streak++;
-            if (streak != 0 && streak % 5 == 0) {
-                Toast.makeText(
-                        this,
-                        Affirmations.AFFIRMATIONS[
-                                new Random().nextInt(Affirmations.AFFIRMATIONS.length)
-                                ],
-                        Toast.LENGTH_LONG
-                ).show();
-            }
         } else {
             this.streak = 0;
         }
@@ -249,6 +255,40 @@ public class MainActivity extends AppCompatActivity {
             this.reorder();
         }
         this.setup();
+    }
+
+    private void submit(String submission, Gender gender) {
+        List<Meaning> meanings = getWordMeanings();
+        boolean isForeign = pool.get(wordIndex).isForeign();
+        Meaning match = null;
+        for (Meaning meaning : meanings) {
+            String translation = isForeign ? meaning.nativeWord : meaning.foreignWord;
+            if (
+                    translation.trim().equalsIgnoreCase(submission.trim()) &&
+                            meaning.getGender() == gender
+            ) {
+                match = meaning;
+                break;
+            }
+        }
+
+        if (match == null) {
+            this.showBack();
+        } else {
+            if (!matches.contains(match)) {
+                this.matches.add(match);
+            }
+
+            if (matches.size() == meanings.size()) {
+                this.showBack();
+            } else {
+                Toast.makeText(
+                        this,
+                        matches.size() + " / " + meanings.size(),
+                        Toast.LENGTH_SHORT
+                ).show();
+            }
+        }
     }
 
     private void reorder() {
@@ -290,6 +330,46 @@ public class MainActivity extends AppCompatActivity {
             this.reorder();
         }
         return grown;
+    }
+
+    private double getConfidence() {
+        double totalConfidence = 0;
+        for (WordWrapper word : pool) {
+            totalConfidence += getConfidence(word, false);
+        }
+        return totalConfidence / pool.size();
+    }
+
+    private Gender getSelectedGender() {
+        if (genderGroup.getCheckedRadioButtonId() == R.id.masculine) {
+            return Gender.MASCULINE;
+        } else if (genderGroup.getCheckedRadioButtonId() == R.id.feminine) {
+            return Gender.FEMININE;
+        } else {
+            return Gender.NEUTER;
+        }
+    }
+
+    private double getConfidence(WordWrapper word, boolean randomness) {
+        double confidence = (
+                word.getSuccess() -
+                        (word.getDaysSinceModified() * (CONFIDENCE_COEFFICIENT / pool.size()))
+        );
+        if (randomness) {
+            long seed = word.getModified() + pool.size() + reorderCount;
+            confidence += ((new Random(seed)).nextDouble() - 0.5) *
+                    (CONFIDENCE_RANDOMNESS / ((AttemptsHelper.getSuccess(history) * 10) + 1));
+        }
+        return confidence;
+    }
+
+    private List<Meaning> getWordMeanings() {
+        WordWrapper word = this.pool.get(wordIndex);
+        if (word.isForeign()) {
+            return this.foreignMeanings.get(word.getWord());
+        } else {
+            return this.nativeMeanings.get(word.getWord());
+        }
     }
 
     @Override

@@ -21,4 +21,16 @@ public class Meaning {
         this.nativeWord = nativeWord;
         this.part = part;
     }
+
+    public Gender getGender() {
+        boolean isMasculine = part.toLowerCase().matches(".*masculine.*");
+        boolean isFeminine = part.toLowerCase().matches(".*feminine.*");
+        if (isMasculine && !isFeminine) {
+            return Gender.MASCULINE;
+        } else if (isFeminine && !isMasculine) {
+            return Gender.FEMININE;
+        } else {
+            return Gender.NEUTER;
+        }
+    }
 }
