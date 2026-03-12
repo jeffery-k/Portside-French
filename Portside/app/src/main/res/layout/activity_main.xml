@@ -11,12 +11,11 @@
     <View
         android:id="@+id/next"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/translations"
+        android:layout_height="200dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0" />
 
     <TextView
@@ -77,13 +76,14 @@
 
     <ScrollView
         android:id="@+id/translations"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:layout_marginTop="72dp"
         android:layout_marginEnd="48dp"
         android:layout_marginStart="48dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/next"
         app:layout_constraintTop_toBottomOf="@+id/word">
 
         <LinearLayout
