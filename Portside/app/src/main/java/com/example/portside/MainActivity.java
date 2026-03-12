@@ -16,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -148,7 +149,10 @@ public class MainActivity extends AppCompatActivity {
 
         this.nextView.setOnTouchListener(
                 (v, event) -> {
-                    if (event.getAction() == MotionEvent.ACTION_UP) {
+                    if (
+                            event.getAction() == MotionEvent.ACTION_UP &&
+                                    correctView.getVisibility() == View.VISIBLE
+                    ) {
                         v.performClick();
                         this.next(getWordMeanings().size() == matches.size());
                     }
@@ -189,7 +193,7 @@ public class MainActivity extends AppCompatActivity {
         controller.show(WindowInsetsCompat.Type.ime());
     }
 
-    private void showBack() {
+    private void showBack(@Nullable String wrongAnswer) {
         this.correctView.setVisibility(View.VISIBLE);
         this.translationsView.setVisibility(View.VISIBLE);
         this.genderGroup.setVisibility(View.INVISIBLE);
@@ -202,6 +206,14 @@ public class MainActivity extends AppCompatActivity {
         } else {
             this.correctView.setText("Wrong");
             this.correctView.setBackgroundColor(INCORRECT_COLOR);
+        }
+
+        if (wrongAnswer != null) {
+            TextView wrongText = new TextView(this);
+            wrongText.setText(String.format("> %s", wrongAnswer));
+            wrongText.setTextSize(18);
+            wrongText.setPadding(4, 4, 4, 12);
+            this.translationsLayout.addView(wrongText);
         }
 
         WordWrapper word = pool.get(wordIndex);
@@ -273,14 +285,16 @@ public class MainActivity extends AppCompatActivity {
         }
 
         if (match == null) {
-            this.showBack();
+            String wrongAnswer = submission;
+            wrongAnswer += gender == Gender.NEUTER ? "" : " | " + gender.name().toLowerCase();
+            this.showBack(submission.isEmpty() ? null : wrongAnswer);
         } else {
             if (!matches.contains(match)) {
                 this.matches.add(match);
             }
 
             if (matches.size() == meanings.size()) {
-                this.showBack();
+                this.showBack(null);
             } else {
                 Toast.makeText(
                         this,
