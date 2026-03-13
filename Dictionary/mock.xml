@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dictionary>
+  <!-- Define the alphabet below. -->
+  <alphabet>aAáÁăảạÆbBcCčdDÐeEéèễệfFgGhHiIíjJkKlLmMnNoOóöớpPqQrRsSšştTŢuUúüưvVwWxXyYzZ</alphabet>
+
+  <sdefs>
+    <!-- Define symbol definitions within <sdef> here. -->
+    <sdef n="n"               c="Noun"/>
+    <sdef n="np"              c="Proper noun"/>
+    <sdef n="vblex"           c="Verb, lexical"/>
+    <sdef n="vbmod"           c="Modal verb"/>
+    <sdef n="vaux"            c="Auxiliary verb"/>
+    <sdef n="vbser"           c="'To be' verb"/>
+    <sdef n="vbhaver"         c="'To have' verb"/>
+    <sdef n="cnjsub"          c="Subordinating conjunction"/>
+    <sdef n="cnjcoo"          c="Co-ordinating conjunction"/>
+    <sdef n="cnjadv"          c="Adverbial conjunction"/>
+    <sdef n="pr"              c="Preposition"/>
+    <sdef n="adv"             c="Adverb"/>
+    <sdef n="ij"              c="Interjection"/>
+    <sdef n="adj"             c="Adjective"/>
+    <sdef n="prn"             c="Pronoun"/>
+
+    <sdef n="attr"            c="Attributive"/>
+    <sdef n="top"             c="Toponym"/>
+    <sdef n="ant"             c="Anthroponym"/>
+    <sdef n="cog"             c="Cognomen"/>
+    <sdef n="org"             c="Organisation"/>
+    <sdef n="al"              c="Altres / misc proper nouns"/>
+
+    <sdef n="pers"            c="Personal pronoun"/>
+    <sdef n="ref"             c="Reflexive pronoun"/>
+    <sdef n="res"             c="Reciprocal pronoun"/>
+
+    <sdef n="det"             c="Determiner"/>
+    <sdef n="pos"             c="Possessive"/>
+
+    <sdef n="p1"              c="1st person"/>
+    <sdef n="p2"              c="2nd person"/>
+    <sdef n="p3"              c="3rd person"/>
+
+    <sdef n="nt"              c="Neuter"/>
+    <sdef n="ut"              c="Utrum"/>
+    <sdef n="f"               c="Feminine"/>
+    <sdef n="m"               c="Masculine"/>
+    <sdef n="un"              c="No gender"/>
+
+    <sdef n="sg"              c="Singular"/>
+    <sdef n="du"              c="Dual"/>
+    <sdef n="pl"              c="Plural"/>
+    <sdef n="sp"              c="Singular / plural"/>
+
+    <sdef n="ind"             c="Indefinite"/>
+    <sdef n="def"             c="Definite"/>
+
+    <sdef n="nom"             c="Nominative"/>
+    <sdef n="acc"             c="Accusative"/>
+    <sdef n="gen"             c="Genitive"/>
+
+    <sdef n="dem"             c="Demonstrative"/>
+    <sdef n="itg"             c="Question word / interrogative"/>
+    <sdef n="qnt"             c="Quantifier"/>
+    <sdef n="neg"             c="Negative"/>
+    <sdef n="emph"            c="Emphatic"/>
+
+    <sdef n="inf"             c="Infinitive"/>
+    <sdef n="pres"            c="Present"/>
+    <sdef n="imp"             c="Imperative"/>
+    <sdef n="pret"            c="Preterite"/>
+    <sdef n="pp"              c="Perfect participle"/>
+    <sdef n="pprs"            c="Present participle"/>
+    <sdef n="pasv"            c="Passive"/>
+    <sdef n="actv"            c="Active voice"/>
+
+    <sdef n="sint"            c="Synthetic (of adjectives)"/>
+    <sdef n="pst"             c="Positive"/>
+    <sdef n="comp"            c="Comparative"/>
+    <sdef n="sup"             c="Superlative"/>
+
+    <sdef n="ord"             c="Ordinal"/>
+    <sdef n="acr"             c="Acronym"/>
+    <sdef n="unc"             c="Uncountable"/>
+
+    <sdef n="num"             c="Numeral"/>
+    <sdef n="sent"            c="Sentence end"/>
+    <sdef n="cm"              c="Comma"/>
+    <sdef n="apos"            c="Apostrophe"/>
+    <sdef n="guio"            c="Dash"/>
+    <sdef n="lpar"            c="Left parenthesis"/>
+    <sdef n="rpar"            c="Right parenthesis"/>
+    <sdef n="lquot"           c="Left quote"/>
+    <sdef n="rquot"           c="Right quote"/>
+
+    <sdef n="n" 	c="Noun"/>
+    <sdef n="np" 	c="Proper name"/>
+    <sdef n="pr" 	c="Preposition"/>
+    <sdef n="vblex" 	c="Verb"/>
+    <sdef n="vbmod" 	c="Modal verb"/>
+    <sdef n="vaux" 	c="Auxiliary verb"/>
+    <sdef n="vbser" 	c="Verb 'to be'"/>
+    <sdef n="vbhaver" 	c="Verb 'to have'"/>
+    <sdef n="vbdo" 	c="Verb 'to do'"/>
+    <sdef n="det" 	c="Determiner"/>
+    <sdef n="predet" 	c="Predeterminer"/>
+    <sdef n="prn" 	c="Pronoun"/>
+    <sdef n="cnjcoo" 	c="Coordinating conjunction"/>
+    <sdef n="cnjsub" 	c="Subordinating conjunction"/>
+    <sdef n="p1" 	c="First person"/>
+    <sdef n="p2" 	c="Second person"/>
+    <sdef n="p3" 	c="Third person"/>
+    <sdef n="attr" 	c="Attributive"/>
+    <sdef n="sg" 	c="Singular"/>
+    <sdef n="pl" 	c="Plural"/>
+    <sdef n="sp" 	c="Singular / plural"/>
+    <sdef n="m" 	c="Masculine"/>
+    <sdef n="f" 	c="Feminine"/>
+    <sdef n="mf" 	c="Masculine / feminine"/>
+    <sdef n="nt" 	c="Neuter"/>
+    <sdef n="mfn" 	c="Masculine / feminine / neuter"/>
+    <sdef n="def" 	c="Definite"/>
+    <sdef n="ind" 	c="Indefinite"/>
+    <sdef n="ref" 	c="Reflexive"/>
+    <sdef n="dem" 	c="Demonstrative"/>
+    <sdef n="top" 	c="Toponym"/>
+    <sdef n="al" 	c="Altres (other)"/>
+    <sdef n="ant" 	c="Anthroponym (first name)"/>
+    <sdef n="cog" 	c="Cognomen (family name)"/>
+    <sdef n="prs" 	c="Present subjunctive"/>
+    <sdef n="pres" 	c="Present (tense)"/>
+    <sdef n="past" 	c="Past"/>
+    <sdef n="pii" 	c="Past indicative"/>
+    <sdef n="pis" 	c="Past subjunctive"/>
+    <sdef n="imp" 	c="Imperative"/>
+    <sdef n="inf" 	c="Infinitive"/>
+    <sdef n="pp" 	c="Past participle"/>
+    <sdef n="subs" 	c="Verbal noun"/>
+    <sdef n="pprs" 	c="Present participle"/>
+    <sdef n="ger" 	c="Gerund"/>
+    <sdef n="cm" 	c="Comma"/>
+    <sdef n="sent" 	c="End of sentence marker"/>
+    <sdef n="quot" 	c="Quote mark"/>
+    <sdef n="lquot" 	c="Quote mark left"/>
+    <sdef n="rquot" 	c="Quote mark right"/>
+    <sdef n="abbr" 	c="Abbreviation"/>
+    <sdef n="adj" 	c="Adjective"/>
+    <sdef n="adv" 	c="Adverb"/>
+    <sdef n="preadv" 	c="Pre-adverb"/>
+    <sdef n="rel" 	c="Relative"/>
+    <sdef n="itg" 	c="Interrogative"/>
+    <sdef n="cnjadv" 	c="Adverbial conjunction"/>
+    <sdef n="comp" 	c="Comparative"/>
+    <sdef n="sup" 	c="Superlative"/>
+    <sdef n="pred" 	c="Predicative"/>
+    <sdef n="ord" 	c="Ordinal"/>
+    <sdef n="qnt" 	c="Quantifier"/>
+    <sdef n="num" 	c="Numeral / Number"/>
+    <sdef n="pron" 	c="Pronoun"/>
+    <sdef n="pro" 	c="Pronoun"/>
+    <sdef n="enc" 	c="Pronoun"/>
+    <sdef n="ij" 	c="Interjection"/>
+    <sdef n="lpar" 	c="Left parenthesis"/>
+    <sdef n="rpar" 	c="Right parenthesis"/>
+    <sdef n="apos" 	c="Apostrophe"/>
+    <sdef n="percent" 	c="Percentage"/>
+    <sdef n="guio" 	c="Hyphen"/>
+    <sdef n="sep" 	c="Seperable verb"/>
+    <sdef n="sint" 	c="Synthetic adjective"/>
+    <sdef n="nom" 	c="Nominative"/>
+    <sdef n="gen" 	c="Genitive"/>
+    <sdef n="acr" 	c="Acronym"/>
+    <sdef n="org" 	c="Organisation"/>
+    <sdef n="tn" 	c=""/>
+    <sdef n="nn" 	c=""/>
+    <sdef n="aa" 	c="Animate"/>
+    <sdef n="an" 	c="Inanimate"/>
+    <sdef n="pos" 	c="Possessive"/>
+    <sdef n="lquest" 	c="left question mark"/>
+    <sdef n="obj" 	c="Object"/>
+    <sdef n="subj" 	c="Subject"/>
+    <sdef n="pers" 	c="Personal (pronoun)"/>
+    <sdef n="ND" 	c=""/>
+    <sdef n="GD" 	c=""/>
+  </sdefs>
+
+  <section id="main" type="standard">
+      <e><p><l>améliorer<s n="vblex"/></l><r>get<g><b/>better</g><s n="vblex"/></r></p></e>
+  </section>
+
+<!--  <section id="regex" type="inconditional">-->
+    <!-- Catch-all rules for all non-translatable chunks.
+	 TODO: being too generic, they slow down the compilation IMMENSELY;
+	 perhaps, it still would make sense to sync the regexps between
+	 the monodicts and the bidict... unless there's a more sane solution.
+	 If the dicts are not sync'ed, `lt-trim` will remove entries
+	 that do not appear BOTH in the mono- and bi-dict :-(
+    <e><re>[^ ]+</re><p><l><s n="num"/></l><r><s n="num"/></r></p></e>
+    <e><re>[^ ]+</re><p><l><s n="sent"/></l><r><s n="sent"/></r></p></e>
+    <e><re>[^ ]+</re><p><l><s n="lquest"/></l><r><s n="lquest"/></r></p></e>
+    <e><re>[^ ]+</re><p><l><s n="lpar"/></l><r><s n="lpar"/></r></p></e>
+    <e><re>[^ ]+</re><p><l><s n="rpar"/></l><r><s n="rpar"/></r></p></e>
+    <e><re>[^ ]+</re><p><l><s n="cm"/></l><r><s n="cm"/></r></p></e>
+    <e><re>[^ ]+</re><p><l><s n="apos"/></l><r><s n="apos"/></r></p></e>
+    <e><re>[^ ]+</re><p><l><s n="guio"/></l><r><s n="guio"/></r></p></e>
+    -->
+<!-- FMT: This is hideous, just add the entries or turn off trimming -->
+<!--  </section>-->
+</dictionary>
+
+<!--
+    Resources:
+    https://wiki.apertium.org/wiki/Bilingual_dictionary
+    https://wiki.apertium.org/wiki/Apertium_New_Language_Pair_HOWTO#Bilingual_dictionary
+-->

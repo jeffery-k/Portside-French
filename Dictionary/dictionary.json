@@ -953,6 +953,7 @@
     },
     "parlementaire": {
         "parlamentario": "Noun | Masculine / feminine",
+        "member of parliament": "Noun | Masculine / feminine",
         "parliamentary": "Adjective | Masculine / feminine"
     },
     "réactionnaire": {
@@ -1362,7 +1363,8 @@
         "aficionado": "Noun | Masculine / feminine",
         "amateur": "Noun | Masculine / feminine",
         "abide": "Verb, lexical",
-        "cope": "Verb, lexical"
+        "cope": "Verb, lexical",
+        "cope with": "Verb, lexical"
     },
     "après-midi": {
         "afternoon": "Noun | Masculine | Singular / plural"
@@ -5613,6 +5615,7 @@
     "devoir": {
         "duty": "Noun | Masculine | Plural",
         "homework": "Noun | Masculine | Plural",
+        "have to": "Modal verb",
         "owe": "Verb, lexical"
     },
     "DVD": {
@@ -8791,7 +8794,8 @@
         "legislation": "Noun | Feminine"
     },
     "législature": {
-        "legislature": "Noun | Feminine"
+        "legislature": "Noun | Feminine",
+        "term of office": "Noun | Feminine"
     },
     "légitimité": {
         "legitimacy": "Noun | Feminine"
@@ -9321,9 +9325,6 @@
     "mélomane": {
         "melomaniac": "Noun | Masculine / feminine",
         "melómano": "Noun | Masculine / feminine"
-    },
-    "parlementaire of parliament": {
-        "member": "Noun | Masculine / feminine"
     },
     "affiliation": {
         "membership": "Noun | Feminine"
@@ -10556,8 +10557,8 @@
     "piano": {
         "piano": "Noun | Masculine"
     },
-    "meuble of furniture": {
-        "piece": "Noun | Masculine"
+    "meuble": {
+        "piece of furniture": "Noun | Masculine"
     },
     "gage": {
         "piece": "Noun | Masculine"
@@ -13375,9 +13376,6 @@
     },
     "dizaine": {
         "ten": "Noun"
-    },
-    "législature of office": {
-        "term": "Noun | Feminine"
     },
     "terminal": {
         "terminal": "Adjective"
@@ -27538,6 +27536,7 @@
     "réussir": {
         "achieve": "Verb, lexical",
         "get": "Verb, lexical",
+        "get hold of": "Verb, lexical",
         "manage": "Verb, lexical"
     },
     "reconnaître": {
@@ -27682,6 +27681,7 @@
     },
     "viser": {
         "aim": "Verb, lexical",
+        "note down": "Verb, lexical",
         "point": "Verb, lexical",
         "prompt": "Verb, lexical",
         "target": "Verb, lexical"
@@ -27694,6 +27694,7 @@
     },
     "laisser": {
         "allow": "Verb, lexical",
+        "give up": "Verb, lexical",
         "leave": "Verb, lexical",
         "lend": "Verb, lexical",
         "let": "Verb, lexical"
@@ -27757,11 +27758,14 @@
         "appear": "Verb, lexical"
     },
     "apparaître": {
-        "appear": "Verb, lexical"
+        "appear": "Verb, lexical",
+        "show up": "Verb, lexical",
+        "turn up": "Verb, lexical"
     },
     "sembler": {
         "appear": "Verb, lexical",
         "look": "Verb, lexical",
+        "look like": "Verb, lexical",
         "seem": "Verb, lexical"
     },
     "apaiser": {
@@ -27777,8 +27781,10 @@
         "apply": "Verb, lexical",
         "enforce": "Verb, lexical"
     },
-    "solliciter for": {
-        "apply": "Verb, lexical"
+    "solliciter": {
+        "apply for": "Verb, lexical",
+        "request": "Verb, lexical",
+        "solicit": "Verb, lexical"
     },
     "fixer": {
         "appoint": "Verb, lexical",
@@ -27829,7 +27835,8 @@
         "arouse": "Verb, lexical",
         "awake": "Verb, lexical",
         "awaken": "Verb, lexical",
-        "wake": "Verb, lexical"
+        "wake": "Verb, lexical",
+        "wake up": "Verb, lexical"
     },
     "exciter": {
         "arouse": "Verb, lexical"
@@ -27862,14 +27869,13 @@
     },
     "demander": {
         "ask": "Verb, lexical",
+        "ask for": "Verb, lexical",
+        "call for": "Verb, lexical",
         "request": "Verb, lexical"
-    },
-    "demander for": {
-        "ask": "Verb, lexical",
-        "call": "Verb, lexical"
     },
     "réunir": {
         "assemble": "Verb, lexical",
+        "bring together": "Verb, lexical",
         "gather": "Verb, lexical"
     },
     "supputer": {
@@ -28018,20 +28024,24 @@
     "baigner": {
         "bathe": "Verb, lexical"
     },
-    "naître born": {
-        "be": "Verb, lexical"
+    "naître": {
+        "be born": "Verb, lexical"
     },
-    "rester left": {
-        "be": "Verb, lexical"
+    "rester": {
+        "be left": "Verb, lexical",
+        "remain": "Verb, lexical",
+        "stay": "Verb, lexical"
     },
-    "manquer missing": {
-        "be": "Verb, lexical"
+    "manquer": {
+        "be missing": "Verb, lexical"
     },
-    "sentir sorry": {
-        "be": "Verb, lexical"
+    "sentir": {
+        "be sorry": "Verb, lexical",
+        "feel": "Verb, lexical"
     },
-    "valoir worth": {
-        "be": "Verb, lexical"
+    "valoir": {
+        "be worth": "Verb, lexical",
+        "cost": "Verb, lexical"
     },
     "résister": {
         "bear": "Verb, lexical",
@@ -28055,6 +28065,7 @@
     "commencer": {
         "begin": "Verb, lexical",
         "commence": "Verb, lexical",
+        "get started": "Verb, lexical",
         "head": "Verb, lexical",
         "start": "Verb, lexical"
     },
@@ -28199,13 +28210,13 @@
     "ramener": {
         "bring": "Verb, lexical"
     },
-    "descendre down": {
-        "bring": "Verb, lexical",
-        "get": "Verb, lexical",
-        "go": "Verb, lexical"
-    },
-    "réunir together": {
-        "bring": "Verb, lexical"
+    "descendre": {
+        "bring down": "Verb, lexical",
+        "descend": "Verb, lexical",
+        "drop": "Verb, lexical",
+        "get down": "Verb, lexical",
+        "go down": "Verb, lexical",
+        "lower": "Verb, lexical"
     },
     "élargir": {
         "broaden": "Verb, lexical",
@@ -28285,8 +28296,8 @@
         "take": "Verb, lexical",
         "wear": "Verb, lexical"
     },
-    "mener à terme out": {
-        "carry": "Verb, lexical"
+    "mener à terme": {
+        "carry out": "Verb, lexical"
     },
     "jeter": {
         "cast": "Verb, lexical",
@@ -28301,6 +28312,8 @@
         "catch": "Verb, lexical",
         "get": "Verb, lexical",
         "grasp": "Verb, lexical",
+        "pick up": "Verb, lexical",
+        "reach for": "Verb, lexical",
         "seize": "Verb, lexical",
         "take": "Verb, lexical"
     },
@@ -28373,10 +28386,8 @@
         "dupe": "Verb, lexical"
     },
     "vérifier": {
-        "check": "Verb, lexical"
-    },
-    "vérifier out": {
-        "check": "Verb, lexical"
+        "check": "Verb, lexical",
+        "check out": "Verb, lexical"
     },
     "contenter": {
         "cheer": "Verb, lexical",
@@ -28434,13 +28445,17 @@
     },
     "monter": {
         "climb": "Verb, lexical",
+        "get on": "Verb, lexical",
+        "go up": "Verb, lexical",
         "mount": "Verb, lexical",
-        "ride": "Verb, lexical"
+        "ride": "Verb, lexical",
+        "set up": "Verb, lexical"
     },
     "fermer": {
         "close": "Verb, lexical",
         "lock": "Verb, lexical",
-        "shut": "Verb, lexical"
+        "shut": "Verb, lexical",
+        "shut down": "Verb, lexical"
     },
     "coïncider": {
         "coincide": "Verb, lexical"
@@ -28456,11 +28471,13 @@
         "collect": "Verb, lexical"
     },
     "recueillir": {
-        "collect": "Verb, lexical"
+        "collect": "Verb, lexical",
+        "pick up": "Verb, lexical"
     },
     "ramasser": {
         "collect": "Verb, lexical",
-        "pick": "Verb, lexical"
+        "pick": "Verb, lexical",
+        "pick up": "Verb, lexical"
     },
     "peindre": {
         "colour": "Verb, lexical",
@@ -28478,24 +28495,28 @@
     "venir": {
         "come": "Verb, lexical"
     },
-    "trouver across": {
-        "come": "Verb, lexical"
+    "trouver": {
+        "come across": "Verb, lexical",
+        "encounter": "Verb, lexical",
+        "find": "Verb, lexical"
     },
-    "revenir back": {
-        "come": "Verb, lexical",
-        "get": "Verb, lexical",
-        "go": "Verb, lexical"
+    "revenir": {
+        "come back": "Verb, lexical",
+        "get back": "Verb, lexical",
+        "go back": "Verb, lexical"
     },
-    "entrer in": {
-        "come": "Verb, lexical",
-        "get": "Verb, lexical",
-        "go": "Verb, lexical"
+    "entrer": {
+        "come in": "Verb, lexical",
+        "get in": "Verb, lexical",
+        "go in": "Verb, lexical",
+        "step into": "Verb, lexical"
     },
-    "sortir out": {
-        "come": "Verb, lexical",
-        "get": "Verb, lexical",
-        "go": "Verb, lexical",
-        "work": "Verb, lexical"
+    "sortir": {
+        "come out": "Verb, lexical",
+        "exit": "Verb, lexical",
+        "get out": "Verb, lexical",
+        "go out": "Verb, lexical",
+        "work out": "Verb, lexical"
     },
     "consoler": {
         "comfort": "Verb, lexical"
@@ -28513,7 +28534,8 @@
         "commit": "Verb, lexical"
     },
     "communiquer": {
-        "communicate": "Verb, lexical"
+        "communicate": "Verb, lexical",
+        "get across": "Verb, lexical"
     },
     "comparer": {
         "compare": "Verb, lexical",
@@ -28686,7 +28708,9 @@
     },
     "continuer": {
         "continue": "Verb, lexical",
-        "keep": "Verb, lexical"
+        "go on": "Verb, lexical",
+        "keep": "Verb, lexical",
+        "keep on": "Verb, lexical"
     },
     "poursuivre": {
         "continue": "Verb, lexical",
@@ -28740,9 +28764,6 @@
     "coordonner": {
         "coordinate": "Verb, lexical"
     },
-    "supporter with": {
-        "cope": "Verb, lexical"
-    },
     "corriger": {
         "correct": "Verb, lexical"
     },
@@ -28750,9 +28771,6 @@
         "correspond": "Verb, lexical"
     },
     "coûter": {
-        "cost": "Verb, lexical"
-    },
-    "valoir": {
         "cost": "Verb, lexical"
     },
     "compter": {
@@ -28803,11 +28821,13 @@
         "intersect": "Verb, lexical"
     },
     "traverser": {
-        "cross": "Verb, lexical"
+        "cross": "Verb, lexical",
+        "get across": "Verb, lexical"
     },
     "remplir": {
         "crowd": "Verb, lexical",
-        "fill": "Verb, lexical"
+        "fill": "Verb, lexical",
+        "fill up": "Verb, lexical"
     },
     "écraser": {
         "crush": "Verb, lexical"
@@ -28829,7 +28849,8 @@
         "grow": "Verb, lexical"
     },
     "soigner": {
-        "cure": "Verb, lexical"
+        "cure": "Verb, lexical",
+        "take care": "Verb, lexical"
     },
     "guérir": {
         "cure": "Verb, lexical"
@@ -28866,7 +28887,8 @@
         "darken": "Verb, lexical"
     },
     "obscurcir": {
-        "darken": "Verb, lexical"
+        "darken": "Verb, lexical",
+        "get dark": "Verb, lexical"
     },
     "dater": {
         "date": "Verb, lexical"
@@ -28876,10 +28898,8 @@
     },
     "traiter": {
         "deal": "Verb, lexical",
+        "deal with": "Verb, lexical",
         "treat": "Verb, lexical"
-    },
-    "traiter with": {
-        "deal": "Verb, lexical"
     },
     "débattre": {
         "debate": "Verb, lexical"
@@ -29012,11 +29032,6 @@
     "dériver": {
         "derive": "Verb, lexical"
     },
-    "descendre": {
-        "descend": "Verb, lexical",
-        "drop": "Verb, lexical",
-        "lower": "Verb, lexical"
-    },
     "qualifier": {
         "describe": "Verb, lexical",
         "zone": "Verb, lexical"
@@ -29145,14 +29160,17 @@
     },
     "déceler": {
         "discover": "Verb, lexical",
+        "find out": "Verb, lexical",
         "unveil": "Verb, lexical"
     },
     "dépister": {
         "discover": "Verb, lexical",
+        "find out": "Verb, lexical",
         "unveil": "Verb, lexical"
     },
     "découvrir": {
         "discover": "Verb, lexical",
+        "find out": "Verb, lexical",
         "unveil": "Verb, lexical"
     },
     "discriminer": {
@@ -29235,6 +29253,7 @@
     "faire": {
         "do": "Verb, lexical",
         "make": "Verb, lexical",
+        "make up": "Verb, lexical",
         "take": "Verb, lexical"
     },
     "documenter": {
@@ -29291,7 +29310,8 @@
     },
     "tomber": {
         "drop": "Verb, lexical",
-        "fall": "Verb, lexical"
+        "fall": "Verb, lexical",
+        "fall down": "Verb, lexical"
     },
     "relâcher": {
         "drop": "Verb, lexical",
@@ -29401,10 +29421,6 @@
         "enclose": "Verb, lexical",
         "shut": "Verb, lexical"
     },
-    "trouver": {
-        "encounter": "Verb, lexical",
-        "find": "Verb, lexical"
-    },
     "animer": {
         "encourage": "Verb, lexical",
         "warm": "Verb, lexical"
@@ -29420,13 +29436,15 @@
     },
     "finir": {
         "end": "Verb, lexical",
-        "finish": "Verb, lexical"
+        "finish": "Verb, lexical",
+        "round off": "Verb, lexical"
     },
     "aboutir": {
         "end": "Verb, lexical"
     },
     "endosser": {
-        "endorse": "Verb, lexical"
+        "endorse": "Verb, lexical",
+        "lumber with": "Verb, lexical"
     },
     "douer": {
         "endow": "Verb, lexical"
@@ -29565,9 +29583,6 @@
     "exister": {
         "exist": "Verb, lexical"
     },
-    "sortir": {
-        "exit": "Verb, lexical"
-    },
     "espérer": {
         "expect": "Verb, lexical",
         "hope": "Verb, lexical",
@@ -29626,9 +29641,6 @@
     "chuter": {
         "fall": "Verb, lexical"
     },
-    "tomber down": {
-        "fall": "Verb, lexical"
-    },
     "favoriser": {
         "favour": "Verb, lexical"
     },
@@ -29665,9 +29677,6 @@
     "ressentir": {
         "feel": "Verb, lexical"
     },
-    "sentir": {
-        "feel": "Verb, lexical"
-    },
     "lutter": {
         "fight": "Verb, lexical",
         "struggle": "Verb, lexical"
@@ -29684,9 +29693,6 @@
         "file": "Verb, lexical"
     },
     "farcir": {
-        "fill": "Verb, lexical"
-    },
-    "remplir up": {
         "fill": "Verb, lexical"
     },
     "filmer": {
@@ -29709,15 +29715,6 @@
         "find": "Verb, lexical"
     },
     "retrouver": {
-        "find": "Verb, lexical"
-    },
-    "déceler out": {
-        "find": "Verb, lexical"
-    },
-    "dépister out": {
-        "find": "Verb, lexical"
-    },
-    "découvrir out": {
         "find": "Verb, lexical"
     },
     "infliger une amende": {
@@ -29770,10 +29767,8 @@
         "foresee": "Verb, lexical"
     },
     "oublier": {
-        "forget": "Verb, lexical"
-    },
-    "oublier about": {
-        "forget": "Verb, lexical"
+        "forget": "Verb, lexical",
+        "forget about": "Verb, lexical"
     },
     "pardonner": {
         "forgive": "Verb, lexical"
@@ -29793,7 +29788,8 @@
     },
     "envoyer": {
         "forward": "Verb, lexical",
-        "send": "Verb, lexical"
+        "send": "Verb, lexical",
+        "send in": "Verb, lexical"
     },
     "fonder": {
         "found": "Verb, lexical"
@@ -29844,51 +29840,34 @@
         "get": "Verb, lexical",
         "receive": "Verb, lexical"
     },
-    "traverser across": {
-        "get": "Verb, lexical"
+    "partir": {
+        "get along": "Verb, lexical",
+        "get off": "Verb, lexical",
+        "leave": "Verb, lexical",
+        "split": "Verb, lexical"
     },
-    "communiquer across": {
-        "get": "Verb, lexical"
+    "améliorer": {
+        "get better": "Verb, lexical",
+        "improve": "Verb, lexical"
     },
-    "partir along": {
-        "get": "Verb, lexical"
+    "grandir": {
+        "get bigger": "Verb, lexical",
+        "grow": "Verb, lexical"
     },
-    "améliorer better": {
-        "get": "Verb, lexical"
+    "commencer à faire nuit": {
+        "get dark": "Verb, lexical"
     },
-    "grandir bigger": {
-        "get": "Verb, lexical"
-    },
-    "commencer à faire nuit dark": {
-        "get": "Verb, lexical"
-    },
-    "obscurcir dark": {
-        "get": "Verb, lexical"
-    },
-    "réussir hold of": {
-        "get": "Verb, lexical"
-    },
-    "partir off": {
-        "get": "Verb, lexical"
-    },
-    "monter on": {
-        "get": "Verb, lexical"
-    },
-    "commencer started": {
-        "get": "Verb, lexical"
-    },
-    "empirer worse": {
-        "get": "Verb, lexical"
+    "empirer": {
+        "get worse": "Verb, lexical",
+        "worsen": "Verb, lexical"
     },
     "dorer": {
         "gild": "Verb, lexical"
     },
-    "rendre back": {
-        "give": "Verb, lexical",
-        "send": "Verb, lexical"
-    },
-    "laisser up": {
-        "give": "Verb, lexical"
+    "rendre": {
+        "give back": "Verb, lexical",
+        "return": "Verb, lexical",
+        "send back": "Verb, lexical"
     },
     "égayer": {
         "gladden": "Verb, lexical"
@@ -29911,25 +29890,17 @@
     "aller": {
         "go": "Verb, lexical"
     },
-    "retourner back": {
-        "go": "Verb, lexical"
+    "retourner": {
+        "go back": "Verb, lexical"
     },
-    "abaisser down": {
-        "go": "Verb, lexical"
+    "abaisser": {
+        "go down": "Verb, lexical"
     },
-    "baisser down": {
-        "go": "Verb, lexical"
+    "baisser": {
+        "go down": "Verb, lexical"
     },
-    "redescendre down": {
-        "go": "Verb, lexical"
-    },
-    "continuer on": {
-        "go": "Verb, lexical",
-        "keep": "Verb, lexical"
-    },
-    "monter up": {
-        "go": "Verb, lexical",
-        "set": "Verb, lexical"
+    "redescendre": {
+        "go down": "Verb, lexical"
     },
     "gouverner": {
         "govern": "Verb, lexical",
@@ -29942,9 +29913,6 @@
         "greet": "Verb, lexical"
     },
     "croître": {
-        "grow": "Verb, lexical"
-    },
-    "grandir": {
         "grow": "Verb, lexical"
     },
     "garantir": {
@@ -29990,12 +29958,6 @@
     "disposer": {
         "have": "Verb, lexical"
     },
-    "avoir got": {
-        "have": "Verb, lexical"
-    },
-    "devoir to": {
-        "have": "Modal verb"
-    },
     "écouter": {
         "hear": "Verb, lexical",
         "listen": "Verb, lexical"
@@ -30035,10 +29997,8 @@
         "hinder": "Verb, lexical"
     },
     "embaucher": {
-        "hire": "Verb, lexical"
-    },
-    "embaucher out": {
-        "hire": "Verb, lexical"
+        "hire": "Verb, lexical",
+        "hire out": "Verb, lexical"
     },
     "taper": {
         "hit": "Verb, lexical"
@@ -30047,8 +30007,8 @@
         "hit": "Verb, lexical",
         "punch": "Verb, lexical"
     },
-    "responsabiliser responsible": {
-        "hold": "Verb, lexical"
+    "responsabiliser": {
+        "hold responsible": "Verb, lexical"
     },
     "honorer": {
         "honour": "Verb, lexical"
@@ -30108,9 +30068,6 @@
     },
     "incarcérer": {
         "imprison": "Verb, lexical"
-    },
-    "améliorer": {
-        "improve": "Verb, lexical"
     },
     "improviser": {
         "improvise": "Verb, lexical"
@@ -30198,7 +30155,8 @@
         "inspire": "Verb, lexical"
     },
     "installer": {
-        "install": "Verb, lexical"
+        "install": "Verb, lexical",
+        "set up": "Verb, lexical"
     },
     "instruire": {
         "instruct": "Verb, lexical"
@@ -30236,7 +30194,8 @@
         "interrogate": "Verb, lexical"
     },
     "intervenir": {
-        "intervene": "Verb, lexical"
+        "intervene": "Verb, lexical",
+        "take part": "Verb, lexical"
     },
     "interviewer": {
         "interview": "Verb, lexical"
@@ -30251,7 +30210,8 @@
         "invalidate": "Verb, lexical"
     },
     "inventer": {
-        "invent": "Verb, lexical"
+        "invent": "Verb, lexical",
+        "make up": "Verb, lexical"
     },
     "investir": {
         "invest": "Verb, lexical",
@@ -30379,10 +30339,6 @@
     "repartir": {
         "leave": "Verb, lexical"
     },
-    "partir": {
-        "leave": "Verb, lexical",
-        "split": "Verb, lexical"
-    },
     "libéraliser": {
         "liberalise": "Verb, lexical"
     },
@@ -30412,8 +30368,9 @@
         "scratch": "Verb, lexical",
         "stripe": "Verb, lexical"
     },
-    "aligner up": {
-        "line": "Verb, lexical"
+    "aligner": {
+        "line up": "Verb, lexical",
+        "range": "Verb, lexical"
     },
     "raccorder": {
         "link": "Verb, lexical"
@@ -30445,26 +30402,24 @@
     },
     "ressembler": {
         "look": "Verb, lexical",
+        "look like": "Verb, lexical",
         "seem": "Verb, lexical"
     },
-    "surveiller after": {
-        "look": "Verb, lexical"
+    "surveiller": {
+        "look after": "Verb, lexical",
+        "watch": "Verb, lexical"
     },
-    "chercher à for": {
-        "look": "Verb, lexical"
+    "chercher à": {
+        "look for": "Verb, lexical"
     },
-    "quérir for": {
-        "look": "Verb, lexical"
+    "quérir": {
+        "look for": "Verb, lexical"
     },
-    "chercher for": {
-        "look": "Verb, lexical",
-        "search": "Verb, lexical"
-    },
-    "sembler like": {
-        "look": "Verb, lexical"
-    },
-    "ressembler like": {
-        "look": "Verb, lexical"
+    "chercher": {
+        "look for": "Verb, lexical",
+        "search": "Verb, lexical",
+        "search for": "Verb, lexical",
+        "seek": "Verb, lexical"
     },
     "menacer": {
         "loom": "Verb, lexical"
@@ -30499,19 +30454,11 @@
     },
     "vouloir": {
         "love": "Verb, lexical",
-        "want": "Verb, lexical"
-    },
-    "endosser with": {
-        "lumber": "Verb, lexical"
+        "want": "Verb, lexical",
+        "want to": "Modal verb"
     },
     "affoler": {
         "madden": "Verb, lexical"
-    },
-    "faire up": {
-        "make": "Verb, lexical"
-    },
-    "inventer up": {
-        "make": "Verb, lexical"
     },
     "manifester": {
         "manifest": "Verb, lexical"
@@ -30626,9 +30573,6 @@
     "noter": {
         "note": "Verb, lexical"
     },
-    "viser down": {
-        "note": "Verb, lexical"
-    },
     "notifier": {
         "notify": "Verb, lexical"
     },
@@ -30720,7 +30664,8 @@
         "separate": "Verb, lexical"
     },
     "participer": {
-        "participate": "Verb, lexical"
+        "participate": "Verb, lexical",
+        "take part": "Verb, lexical"
     },
     "appointer": {
         "pay": "Verb, lexical"
@@ -30728,11 +30673,11 @@
     "payer": {
         "pay": "Verb, lexical"
     },
-    "payer en liquide cash": {
-        "pay": "Verb, lexical"
+    "payer en liquide": {
+        "pay cash": "Verb, lexical"
     },
-    "payer en espèces cash": {
-        "pay": "Verb, lexical"
+    "payer en espèces": {
+        "pay cash": "Verb, lexical"
     },
     "pénétrer": {
         "penetrate": "Verb, lexical"
@@ -30752,15 +30697,6 @@
     },
     "photographier": {
         "photograph": "Verb, lexical"
-    },
-    "recueillir up": {
-        "pick": "Verb, lexical"
-    },
-    "ramasser up": {
-        "pick": "Verb, lexical"
-    },
-    "prendre up": {
-        "pick": "Verb, lexical"
     },
     "pirater": {
         "pirate": "Verb, lexical"
@@ -30927,9 +30863,12 @@
         "pull": "Verb, lexical",
         "strain": "Verb, lexical"
     },
-    "enlever out": {
-        "pull": "Verb, lexical",
-        "take": "Verb, lexical"
+    "enlever": {
+        "pull out": "Verb, lexical",
+        "remove": "Verb, lexical",
+        "take away": "Verb, lexical",
+        "take off": "Verb, lexical",
+        "take out": "Verb, lexical"
     },
     "bomber": {
         "pump": "Verb, lexical"
@@ -30977,14 +30916,8 @@
         "range": "Verb, lexical",
         "vary": "Verb, lexical"
     },
-    "aligner": {
-        "range": "Verb, lexical"
-    },
     "ratifier": {
         "ratify": "Verb, lexical"
-    },
-    "prendre for": {
-        "reach": "Verb, lexical"
     },
     "réagir": {
         "react": "Verb, lexical"
@@ -31119,18 +31052,11 @@
     "demeurer": {
         "remain": "Verb, lexical"
     },
-    "rester": {
-        "remain": "Verb, lexical",
-        "stay": "Verb, lexical"
-    },
     "remédier": {
         "remedy": "Verb, lexical"
     },
     "expédier": {
         "remit": "Verb, lexical"
-    },
-    "enlever": {
-        "remove": "Verb, lexical"
     },
     "éloigner": {
         "remove": "Verb, lexical"
@@ -31161,10 +31087,6 @@
     },
     "racheter": {
         "repurchase": "Verb, lexical"
-    },
-    "solliciter": {
-        "request": "Verb, lexical",
-        "solicit": "Verb, lexical"
     },
     "requérir": {
         "require": "Verb, lexical"
@@ -31209,7 +31131,8 @@
         "restructure": "Verb, lexical"
     },
     "résulter": {
-        "result": "Verb, lexical"
+        "result": "Verb, lexical",
+        "turn out": "Verb, lexical"
     },
     "ressusciter": {
         "resurrect": "Verb, lexical"
@@ -31225,9 +31148,6 @@
     },
     "reculer": {
         "retreat": "Verb, lexical"
-    },
-    "rendre": {
-        "return": "Verb, lexical"
     },
     "révoquer": {
         "reverse": "Verb, lexical",
@@ -31268,9 +31188,6 @@
         "root": "Verb, lexical"
     },
     "arrondir": {
-        "round": "Verb, lexical"
-    },
-    "finir off": {
         "round": "Verb, lexical"
     },
     "ramer": {
@@ -31338,13 +31255,10 @@
     "cacheter": {
         "seal": "Verb, lexical"
     },
-    "chercher": {
-        "search": "Verb, lexical",
-        "seek": "Verb, lexical"
-    },
     "asseoir": {
         "seat": "Verb, lexical",
-        "sit": "Verb, lexical"
+        "sit": "Verb, lexical",
+        "sit down": "Verb, lexical"
     },
     "seconder": {
         "second": "Verb, lexical"
@@ -31371,9 +31285,6 @@
     "vendre": {
         "sell": "Verb, lexical"
     },
-    "envoyer in": {
-        "send": "Verb, lexical"
-    },
     "sensibiliser": {
         "sensitise": "Verb, lexical"
     },
@@ -31383,17 +31294,15 @@
     "servir": {
         "serve": "Verb, lexical"
     },
-    "convoquer up": {
-        "set": "Verb, lexical"
+    "convoquer": {
+        "set up": "Verb, lexical",
+        "summon": "Verb, lexical"
     },
-    "installer up": {
-        "set": "Verb, lexical"
+    "mettre en oeuvre": {
+        "set up": "Verb, lexical"
     },
-    "mettre en oeuvre up": {
-        "set": "Verb, lexical"
-    },
-    "mettre en place up": {
-        "set": "Verb, lexical"
+    "mettre en place": {
+        "set up": "Verb, lexical"
     },
     "coudre": {
         "sew": "Verb, lexical"
@@ -31443,14 +31352,7 @@
     "héler": {
         "shout": "Verb, lexical"
     },
-    "apparaître up": {
-        "show": "Verb, lexical",
-        "turn": "Verb, lexical"
-    },
     "renfermer": {
-        "shut": "Verb, lexical"
-    },
-    "fermer down": {
         "shut": "Verb, lexical"
     },
     "signer": {
@@ -31473,9 +31375,6 @@
     },
     "effondrer": {
         "sink": "Verb, lexical"
-    },
-    "asseoir down": {
-        "sit": "Verb, lexical"
     },
     "situer": {
         "situate": "Verb, lexical"
@@ -31542,17 +31441,14 @@
     "fouler": {
         "step": "Verb, lexical"
     },
-    "entrer into": {
-        "step": "Verb, lexical"
-    },
     "atteler": {
         "stick": "Verb, lexical"
     },
     "accrocher": {
         "stick": "Verb, lexical"
     },
-    "brasser up": {
-        "stir": "Verb, lexical"
+    "brasser": {
+        "stir up": "Verb, lexical"
     },
     "stocker": {
         "store": "Verb, lexical"
@@ -31614,9 +31510,6 @@
     },
     "suggérer": {
         "suggest": "Verb, lexical"
-    },
-    "convoquer": {
-        "summon": "Verb, lexical"
     },
     "superposer": {
         "superimpose": "Verb, lexical"
@@ -31689,23 +31582,8 @@
     "tarder": {
         "take": "Verb, lexical"
     },
-    "profiter de advantage of": {
-        "take": "Verb, lexical"
-    },
-    "enlever away": {
-        "take": "Verb, lexical"
-    },
-    "soigner care": {
-        "take": "Verb, lexical"
-    },
-    "enlever off": {
-        "take": "Verb, lexical"
-    },
-    "intervenir part": {
-        "take": "Verb, lexical"
-    },
-    "participer part": {
-        "take": "Verb, lexical"
+    "profiter de": {
+        "take advantage of": "Verb, lexical"
     },
     "domestiquer": {
         "tame": "Verb, lexical"
@@ -31791,8 +31669,8 @@
     "tracer": {
         "trace": "Verb, lexical"
     },
-    "remonter back": {
-        "trace": "Verb, lexical"
+    "remonter": {
+        "trace back": "Verb, lexical"
     },
     "entraîner": {
         "train": "Verb, lexical"
@@ -31815,8 +31693,9 @@
     "voyager": {
         "travel": "Verb, lexical"
     },
-    "parcourir across": {
-        "travel": "Verb, lexical"
+    "parcourir": {
+        "travel across": "Verb, lexical",
+        "visit": "Verb, lexical"
     },
     "tâcher": {
         "treat": "Verb, lexical"
@@ -31824,11 +31703,8 @@
     "trébucher": {
         "trip": "Verb, lexical"
     },
-    "éteindre off": {
-        "turn": "Verb, lexical"
-    },
-    "résulter out": {
-        "turn": "Verb, lexical"
+    "éteindre": {
+        "turn off": "Verb, lexical"
     },
     "corder": {
         "twist": "Verb, lexical"
@@ -31882,20 +31758,14 @@
     "rendre visite": {
         "visit": "Verb, lexical"
     },
-    "parcourir": {
-        "visit": "Verb, lexical"
-    },
     "visualiser": {
         "visualise": "Verb, lexical"
     },
     "voter": {
         "vote": "Verb, lexical"
     },
-    "éveiller up": {
-        "wake": "Verb, lexical"
-    },
-    "réveiller up": {
-        "wake": "Verb, lexical"
+    "éveiller": {
+        "wake up": "Verb, lexical"
     },
     "cheminer": {
         "walk": "Verb, lexical"
@@ -31903,17 +31773,11 @@
     "marcher": {
         "walk": "Verb, lexical"
     },
-    "vouloir to": {
-        "want": "Modal verb"
-    },
     "avertir": {
         "warn": "Verb, lexical"
     },
     "laver": {
         "wash": "Verb, lexical"
-    },
-    "surveiller": {
-        "watch": "Verb, lexical"
     },
     "ondoyer": {
         "wave": "Verb, lexical"
@@ -31941,9 +31805,6 @@
     },
     "travailler": {
         "work": "Verb, lexical"
-    },
-    "empirer": {
-        "worsen": "Verb, lexical"
     },
     "entortiller": {
         "wrap": "Verb, lexical"
@@ -33965,23 +33826,23 @@
     "retraire": {
         "withdraw": "Verb, lexical"
     },
-    "rémunérer back": {
-        "pay": "Verb, lexical"
+    "rémunérer": {
+        "pay back": "Verb, lexical"
     },
-    "décoller off": {
-        "take": "Verb, lexical"
+    "décoller": {
+        "take off": "Verb, lexical"
     },
-    "ressortir out": {
-        "stand": "Verb, lexical"
+    "ressortir": {
+        "stand out": "Verb, lexical"
     },
-    "accourir over": {
-        "rush": "Verb, lexical"
+    "accourir": {
+        "rush over": "Verb, lexical"
     },
-    "coucher down": {
-        "lie": "Verb, lexical"
+    "coucher": {
+        "lie down": "Verb, lexical"
     },
-    "échouer down": {
-        "break": "Verb, lexical"
+    "échouer": {
+        "break down": "Verb, lexical"
     },
     "au revoir": {
         "bye": "Interjection",

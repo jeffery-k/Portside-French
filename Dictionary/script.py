@@ -20,6 +20,7 @@ def read_json(name: str) -> Any:
 
 
 def create_dictionary_json():
+    # with open("mock.xml", "r", encoding="utf-8") as dict_file:
     with open("dictionary.xml", "r", encoding="utf-8") as dict_file:
         xml_data = dict_file.read()
     root = ET.fromstring(xml_data)
@@ -66,7 +67,7 @@ def create_dictionary_json():
             elif c.tag == "g":
                 for c2 in c:
                     assert c2.tail is not None
-                    word += f" {c2.tail}"
+                    translation += f" {c2.tail}"
             elif c.tag != "s":
                 raise AssertionError("huh?")
 
