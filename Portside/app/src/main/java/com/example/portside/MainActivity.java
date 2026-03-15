@@ -166,9 +166,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void setup() {
         while (getConfidence() >= CONFIDENCE_GROWTH_THRESHOLD) {
-            if (this.growPool()) {
-                Toast.makeText(this, "Growing Pool!", Toast.LENGTH_SHORT).show();
-            } else {
+            if (!this.growPool()) {
                 break;
             }
         }
@@ -334,6 +332,24 @@ public class MainActivity extends AppCompatActivity {
             foreignReserves.remove(foreignIndex);
             this.pool.add(new WordWrapper(foreignWord));
             grown = true;
+
+            List<Meaning> meanings = this.foreignMeanings.get(foreignWord.word);
+            StringBuilder meaningsString = new StringBuilder();
+            for (int i = 0; i < meanings.size(); i++) {
+                Meaning meaning = meanings.get(i);
+                meaningsString.
+                        append(" ").
+                        append(meaning.nativeWord).
+                        append(" (").
+                        append(meaning.getGender().getShortHand()).
+                        append(i < meanings.size() - 1 ? ")," : ")");
+            }
+
+            Toast.makeText(
+                    this,
+                    foreignWord.word + " (fr.) -" + meaningsString,
+                    Toast.LENGTH_LONG
+            ).show();
         }
 
         if (!nativeReserves.isEmpty()) {
@@ -342,6 +358,24 @@ public class MainActivity extends AppCompatActivity {
             nativeReserves.remove(nativeIndex);
             this.pool.add(new WordWrapper(nativeWord));
             grown = true;
+
+            List<Meaning> meanings = this.nativeMeanings.get(nativeWord.word);
+            StringBuilder meaningsString = new StringBuilder();
+            for (int i = 0; i < meanings.size(); i++) {
+                Meaning meaning = meanings.get(i);
+                meaningsString.
+                        append(" ").
+                        append(meaning.foreignWord).
+                        append(" (").
+                        append(meaning.getGender().getShortHand()).
+                        append(i < meanings.size() - 1 ? ")," : ")");
+            }
+
+            Toast.makeText(
+                    this,
+                    nativeWord.word + " (en.) -" + meaningsString,
+                    Toast.LENGTH_LONG
+            ).show();
         }
 
         if (grown) {
