@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int START_POOL_SIZE = 8;
     private static final double REORDER_POWER_SCALE = 0.7;
     private static final double CONFIDENCE_DAILY_DECAY = 24;
-    private static final double CONFIDENCE_GROWTH_THRESHOLD = .5;
+    private static final double CONFIDENCE_GROWTH_THRESHOLD = .8;
     private static final double CONFIDENCE_RANDOMNESS = 1;
     private static final int INCORRECT_SHIFT_MINIMUM = 5;
     private static final int INCORRECT_SHIFT_MAXIMUM = 10;
