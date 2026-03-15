@@ -41,7 +41,7 @@ import java.util.Random;
 public class MainActivity extends AppCompatActivity {
     private static final int START_POOL_SIZE = 8;
     private static final double REORDER_POWER_SCALE = 0.7;
-    private static final double CONFIDENCE_COEFFICIENT = 1;
+    private static final double CONFIDENCE_DAILY_DECAY = 24;
     private static final double CONFIDENCE_GROWTH_THRESHOLD = .5;
     private static final double CONFIDENCE_RANDOMNESS = 1;
     private static final int INCORRECT_SHIFT_MINIMUM = 5;
@@ -168,6 +168,8 @@ public class MainActivity extends AppCompatActivity {
         while (getConfidence() >= CONFIDENCE_GROWTH_THRESHOLD) {
             if (this.growPool()) {
                 Toast.makeText(this, "Growing Pool!", Toast.LENGTH_SHORT).show();
+            } else {
+                break;
             }
         }
         this.matches.clear();
@@ -369,7 +371,7 @@ public class MainActivity extends AppCompatActivity {
     private double getConfidence(WordWrapper word, boolean randomness) {
         double confidence = (
                 word.getSuccess() -
-                        (word.getDaysSinceModified() * (CONFIDENCE_COEFFICIENT / pool.size()))
+                        (word.getDaysSinceModified() * (CONFIDENCE_DAILY_DECAY / pool.size()))
         );
         if (randomness) {
             long seed = word.getModified() + pool.size() + reorderCount;
