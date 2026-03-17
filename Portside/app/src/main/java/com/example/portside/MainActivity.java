@@ -177,7 +177,8 @@ public class MainActivity extends AppCompatActivity {
         this.streakView.setText(String.format("Streak: %d", streak));
         this.poolView.setText(String.format("Pool: %d", pool.size()));
         this.confidenceView.setText(String.format(
-                "Confidence: %d | %d",
+                "Confidence: %d | %d | %d",
+                (int) (getConfidence(this.pool.get(wordIndex), false) * 100),
                 (int) (AttemptsHelper.getSuccess(history) * 100),
                 (int) (getConfidence() * 100)
         ));
