@@ -56,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView wordView;
     private TextView streakView;
     private TextView poolView;
+    private TextView confidenceView;
     private ScrollView translationsView;
     private LinearLayout translationsLayout;
     private RadioGroup genderGroup;
@@ -130,6 +131,7 @@ public class MainActivity extends AppCompatActivity {
         this.wordView = findViewById(R.id.word);
         this.streakView = findViewById(R.id.streak);
         this.poolView = findViewById(R.id.pool);
+        this.confidenceView = findViewById(R.id.confidence);
         this.translationsView = findViewById(R.id.translations);
         this.translationsLayout = findViewById(R.id.translations_text);
         this.genderGroup = findViewById(R.id.gender);
@@ -174,6 +176,11 @@ public class MainActivity extends AppCompatActivity {
 
         this.streakView.setText(String.format("Streak: %d", streak));
         this.poolView.setText(String.format("Pool: %d", pool.size()));
+        this.confidenceView.setText(String.format(
+                "Confidence: %d | %d",
+                (int) (AttemptsHelper.getSuccess(history) * 100),
+                (int) (getConfidence() * 100)
+        ));
 
         this.correctView.setVisibility(View.INVISIBLE);
         this.translationsView.setVisibility(View.INVISIBLE);
