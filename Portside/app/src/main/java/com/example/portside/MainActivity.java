@@ -16,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
@@ -394,10 +395,13 @@ public class MainActivity extends AppCompatActivity {
 
     private double getConfidence() {
         double totalConfidence = 0;
+        double totalWeight = 0;
         for (WordWrapper word : pool) {
-            totalConfidence += getConfidence(word, false);
+            double weight = getWordMeanings(word).size();
+            totalConfidence += getConfidence(word, false) * weight;
+            totalWeight += weight;
         }
-        return totalConfidence / pool.size();
+        return totalConfidence / totalWeight;
     }
 
     private Gender getSelectedGender() {
@@ -425,6 +429,10 @@ public class MainActivity extends AppCompatActivity {
 
     private List<Meaning> getWordMeanings() {
         WordWrapper word = this.pool.get(wordIndex);
+        return getWordMeanings(word);
+    }
+
+    private List<Meaning> getWordMeanings(@NonNull WordWrapper word) {
         if (word.isForeign()) {
             return this.foreignMeanings.get(word.getWord());
         } else {
