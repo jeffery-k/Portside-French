@@ -36,6 +36,7 @@ class Meaning(Base):
     foreign: Mapped[str] = mapped_column(primary_key=True, nullable=False)
     native: Mapped[str] = mapped_column(primary_key=True, nullable=False)
     part: Mapped[str] = mapped_column(nullable=False)
+    enabled: Mapped[int] = mapped_column(nullable=False)
 
     __table_args__ = (
         PrimaryKeyConstraint(foreign, native),

@@ -108,6 +108,7 @@ def create_db():
                 foreign=foreign_word,
                 native=native_word,
                 part=part,
+                enabled=1,
             )
             meanings[(foreign_word, native_word)] = meaning
 
