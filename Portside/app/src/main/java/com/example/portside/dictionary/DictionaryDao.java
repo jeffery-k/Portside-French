@@ -18,8 +18,11 @@ public interface DictionaryDao {
     List<Meaning> getAllMeanings();
 
     @Update
-    void updateForeign(Foreign foreigns);
+    void updateForeign(Foreign foreignWord);
 
     @Update
-    void updateNative(Native natives);
+    void updateNative(Native nativeWord);
+
+    @Update
+    void updateMeaning(Meaning meaning);
 }

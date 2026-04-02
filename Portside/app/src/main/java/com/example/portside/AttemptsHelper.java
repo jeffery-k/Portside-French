@@ -5,14 +5,20 @@ public class AttemptsHelper {
 
     public static String createUpdatedAttempts(String attempts, boolean correct) {
         String nextAttempt = correct ? "1" : "0";
-        return attempts.substring(1) + nextAttempt;
+        return nextAttempt + attempts.substring(0, attempts.length() - 1);
+    }
+
+    public static String createDecayedAttempts(String attempts, int count) {
+        return attempts.substring(count) + "0".repeat(count);
     }
 
     public static double getSuccess(String attempts) {
         double success = 0;
         double total = 0;
         double weight = 1;
-        for (char attempt : attempts.toCharArray()) {
+        char[] attemptsArray = attempts.toCharArray();
+        for (int i = attemptsArray.length - 1; i >= 0; i--) {
+            char attempt = attemptsArray[i];
             total += weight;
             if (attempt == '1') {
                 success += weight;

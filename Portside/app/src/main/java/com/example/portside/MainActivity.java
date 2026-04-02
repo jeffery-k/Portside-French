@@ -2,12 +2,13 @@ package com.example.portside;
 
 import android.graphics.Color;
 import android.os.Bundle;
-import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
-import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -32,17 +33,19 @@ import com.example.portside.dictionary.Foreign;
 import com.example.portside.dictionary.Gender;
 import com.example.portside.dictionary.Meaning;
 import com.example.portside.dictionary.Native;
+import com.google.android.material.chip.Chip;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 public class MainActivity extends AppCompatActivity {
     private static final int START_POOL_SIZE = 8;
     private static final double REORDER_POWER_SCALE = 0.7;
-    private static final double CONFIDENCE_DAILY_DECAY = 24;
+    private static final double CONFIDENCE_DAILY_DECAY = 1;
     private static final double CONFIDENCE_GROWTH_THRESHOLD = .8;
     private static final double CONFIDENCE_RANDOMNESS = 1;
     private static final int INCORRECT_SHIFT_MINIMUM = 5;
@@ -63,6 +66,7 @@ public class MainActivity extends AppCompatActivity {
     private RadioGroup genderGroup;
     private RadioButton neuterButton;
     private EditText submissionText;
+    private Chip editChip;
 
     private List<Foreign> allForeigns;
     private List<Native> allNatives;
@@ -79,6 +83,7 @@ public class MainActivity extends AppCompatActivity {
     private int wordsSinceReorder = 0;
     private long reorderCount = 0;
     private String history = "0000000000";
+    private String wrongAnswer = null;
 
     private void init() {
         DictionaryDatabase db = Room.databaseBuilder(
@@ -138,6 +143,7 @@ public class MainActivity extends AppCompatActivity {
         this.genderGroup = findViewById(R.id.gender);
         this.neuterButton = findViewById(R.id.neuter);
         this.submissionText = findViewById(R.id.submission);
+        this.editChip = findViewById(R.id.edit);
 
         this.submissionText.setOnEditorActionListener((v, actionId, event) -> {
             if (
@@ -149,6 +155,19 @@ public class MainActivity extends AppCompatActivity {
             }
             return false;
         });
+        this.submissionText.setOnFocusChangeListener(
+                (v, hasFocus) -> {
+                    if (hasFocus) {
+                        try {
+                            Thread.sleep(100);
+                        } catch (InterruptedException ignored) {
+                        }
+                        WindowInsetsControllerCompat controller =
+                                WindowCompat.getInsetsController(getWindow(), submissionText);
+                        controller.show(WindowInsetsCompat.Type.ime());
+                    }
+                }
+        );
 
         this.nextView.setOnTouchListener(
                 (v, event) -> {
@@ -163,17 +182,25 @@ public class MainActivity extends AppCompatActivity {
                 }
         );
 
+        this.editChip.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            updateTranslationsLayout();
+        });
+
         this.reorder();
         this.setup();
     }
 
     private void setup() {
+        this.pool = this.pool.stream().filter(
+                wordWrapper -> !getWordMeanings(wordWrapper).isEmpty()
+        ).collect(Collectors.toList());
         while (getConfidence() >= CONFIDENCE_GROWTH_THRESHOLD) {
             if (!this.growPool()) {
                 break;
             }
         }
         this.matches.clear();
+        this.wrongAnswer = null;
 
         this.streakView.setText(String.format("Streak: %d", streak));
         this.poolView.setText(String.format("Pool: %d", pool.size()));
@@ -184,6 +211,8 @@ public class MainActivity extends AppCompatActivity {
                 (int) (getConfidence() * 100)
         ));
 
+        this.editChip.setChecked(false);
+        this.editChip.setVisibility(View.INVISIBLE);
         this.correctView.setVisibility(View.INVISIBLE);
         this.translationsView.setVisibility(View.INVISIBLE);
         this.translationsLayout.removeAllViews();
@@ -191,18 +220,16 @@ public class MainActivity extends AppCompatActivity {
         this.neuterButton.setChecked(true);
         this.submissionText.setVisibility(View.VISIBLE);
         this.submissionText.setText("");
-        this.submissionText.requestFocus();
 
         WordWrapper word = this.pool.get(wordIndex);
         String languageIndicator = word.isForeign() ? "(fr.)" : "(en.)";
         this.wordView.setText(String.format("%s\n%s", word.getWord(), languageIndicator));
 
-        WindowInsetsControllerCompat controller =
-                WindowCompat.getInsetsController(getWindow(), submissionText);
-        controller.show(WindowInsetsCompat.Type.ime());
+        this.submissionText.requestFocus();
     }
 
-    private void showBack(@Nullable String wrongAnswer) {
+    private void showBack() {
+        this.editChip.setVisibility(View.VISIBLE);
         this.correctView.setVisibility(View.VISIBLE);
         this.translationsView.setVisibility(View.VISIBLE);
         this.genderGroup.setVisibility(View.INVISIBLE);
@@ -216,6 +243,15 @@ public class MainActivity extends AppCompatActivity {
             this.correctView.setText("Wrong");
             this.correctView.setBackgroundColor(INCORRECT_COLOR);
         }
+        updateTranslationsLayout();
+
+        WindowInsetsControllerCompat controller =
+                WindowCompat.getInsetsController(getWindow(), submissionText);
+        controller.hide(WindowInsetsCompat.Type.ime());
+    }
+
+    private void updateTranslationsLayout() {
+        this.translationsLayout.removeAllViews();
 
         if (wrongAnswer != null) {
             TextView wrongText = new TextView(this);
@@ -226,25 +262,48 @@ public class MainActivity extends AppCompatActivity {
         }
 
         WordWrapper word = pool.get(wordIndex);
-        List<Meaning> meanings = getWordMeanings();
+        List<Meaning> meanings = getWordMeanings(!editChip.isChecked());
         for (Meaning meaning : meanings) {
             TextView meaningText = new TextView(this);
             String translation = word.isForeign() ? meaning.nativeWord : meaning.foreignWord;
             translation += " | " + meaning.part;
             meaningText.setText(translation);
             meaningText.setTextSize(18);
-            meaningText.setPadding(4, 4, 4, 12);
+            meaningText.setPadding(4, 4, 12, 12);
             if (matches.contains(meaning)) {
                 meaningText.setBackgroundColor(CORRECT_COLOR);
             } else {
                 meaningText.setBackgroundColor(INCORRECT_COLOR);
             }
-            this.translationsLayout.addView(meaningText);
+            if (!editChip.isChecked()) {
+                this.translationsLayout.addView(meaningText);
+            } else {
+                HorizontalScrollView horizontalScrollView = new HorizontalScrollView(this);
+                LinearLayout rowLayout = new LinearLayout(this);
+                rowLayout.setOrientation(LinearLayout.HORIZONTAL);
+                LinearLayout.LayoutParams rowParams = new LinearLayout.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.WRAP_CONTENT);
+                rowLayout.setLayoutParams(rowParams);
+                rowLayout.addView(meaningText);
+                Chip enableChip = new Chip(this);
+                enableChip.setText("Enabled");
+                enableChip.setCheckable(true);
+                enableChip.setChecked(meaning.enabled);
+                enableChip.setOnCheckedChangeListener(
+                        (buttonView, isChecked) -> {
+                            meaning.enabled = isChecked;
+                            dao.updateMeaning(meaning);
+                        }
+                );
+                TextView paddingText = new TextView(this);
+                paddingText.setText("    ");
+                rowLayout.addView(paddingText);
+                rowLayout.addView(enableChip);
+                horizontalScrollView.addView(rowLayout);
+                this.translationsLayout.addView(horizontalScrollView);
+            }
         }
-
-        WindowInsetsControllerCompat controller =
-                WindowCompat.getInsetsController(getWindow(), submissionText);
-        controller.hide(WindowInsetsCompat.Type.ime());
     }
 
     private void next(boolean correct) {
@@ -294,16 +353,18 @@ public class MainActivity extends AppCompatActivity {
         }
 
         if (match == null) {
-            String wrongAnswer = submission;
-            wrongAnswer += gender == Gender.NEUTER ? "" : " | " + gender.name().toLowerCase();
-            this.showBack(submission.isEmpty() ? null : wrongAnswer);
+            if (!submission.isEmpty()) {
+                this.wrongAnswer = submission;
+                this.wrongAnswer += gender == Gender.NEUTER ? "" : " | " + gender.name().toLowerCase();
+            }
+            this.showBack();
         } else {
             if (!matches.contains(match)) {
                 this.matches.add(match);
             }
 
             if (matches.size() == meanings.size()) {
-                this.showBack(null);
+                this.showBack();
             } else {
                 Toast.makeText(
                         this,
@@ -317,6 +378,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void reorder() {
+        this.pool.forEach(wordWrapper -> {
+            wordWrapper.decay(dao, CONFIDENCE_DAILY_DECAY / this.pool.size());
+        });
         this.pool.sort(
                 (word1, word2) ->
                         (int) (
@@ -339,10 +403,11 @@ public class MainActivity extends AppCompatActivity {
             int foreignIndex = random.nextInt(foreignReserves.size());
             Foreign foreignWord = foreignReserves.get(foreignIndex);
             foreignReserves.remove(foreignIndex);
-            this.pool.add(new WordWrapper(foreignWord));
+            WordWrapper newWord = new WordWrapper(foreignWord);
+            this.pool.add(newWord);
             grown = true;
 
-            List<Meaning> meanings = this.foreignMeanings.get(foreignWord.word);
+            List<Meaning> meanings = getWordMeanings(newWord);
             StringBuilder meaningsString = new StringBuilder();
             for (int i = 0; i < meanings.size(); i++) {
                 Meaning meaning = meanings.get(i);
@@ -365,10 +430,11 @@ public class MainActivity extends AppCompatActivity {
             int nativeIndex = random.nextInt(nativeReserves.size());
             Native nativeWord = nativeReserves.get(nativeIndex);
             nativeReserves.remove(nativeIndex);
-            this.pool.add(new WordWrapper(nativeWord));
+            WordWrapper newWord = new WordWrapper(nativeWord);
+            this.pool.add(newWord);
             grown = true;
 
-            List<Meaning> meanings = this.nativeMeanings.get(nativeWord.word);
+            List<Meaning> meanings = getWordMeanings(newWord);
             StringBuilder meaningsString = new StringBuilder();
             for (int i = 0; i < meanings.size(); i++) {
                 Meaning meaning = meanings.get(i);
@@ -393,6 +459,16 @@ public class MainActivity extends AppCompatActivity {
         return grown;
     }
 
+    private Gender getSelectedGender() {
+        if (genderGroup.getCheckedRadioButtonId() == R.id.masculine) {
+            return Gender.MASCULINE;
+        } else if (genderGroup.getCheckedRadioButtonId() == R.id.feminine) {
+            return Gender.FEMININE;
+        } else {
+            return Gender.NEUTER;
+        }
+    }
+
     private double getConfidence() {
         double totalConfidence = 0;
         double totalWeight = 0;
@@ -404,39 +480,38 @@ public class MainActivity extends AppCompatActivity {
         return totalConfidence / totalWeight;
     }
 
-    private Gender getSelectedGender() {
-        if (genderGroup.getCheckedRadioButtonId() == R.id.masculine) {
-            return Gender.MASCULINE;
-        } else if (genderGroup.getCheckedRadioButtonId() == R.id.feminine) {
-            return Gender.FEMININE;
-        } else {
-            return Gender.NEUTER;
-        }
-    }
-
     private double getConfidence(WordWrapper word, boolean randomness) {
-        double confidence = (
-                word.getSuccess() -
-                        (word.getDaysSinceModified() * (CONFIDENCE_DAILY_DECAY / pool.size()))
-        );
+        double confidence = word.getSuccess();
         if (randomness) {
             long seed = word.getModified() + pool.size() + reorderCount;
-            confidence += ((new Random(seed)).nextDouble() - 0.5) *
-                    (CONFIDENCE_RANDOMNESS / ((AttemptsHelper.getSuccess(history) * 10) + 1));
+            confidence += (new Random(seed)).nextGaussian() *
+                    (CONFIDENCE_RANDOMNESS / ((AttemptsHelper.getSuccess(history) * 19) + 1));
         }
         return confidence;
     }
 
     private List<Meaning> getWordMeanings() {
+        return getWordMeanings(true);
+    }
+
+    private List<Meaning> getWordMeanings(boolean filtered) {
         WordWrapper word = this.pool.get(wordIndex);
-        return getWordMeanings(word);
+        return getWordMeanings(word, filtered);
     }
 
     private List<Meaning> getWordMeanings(@NonNull WordWrapper word) {
+        return getWordMeanings(word, true);
+    }
+
+    private List<Meaning> getWordMeanings(@NonNull WordWrapper word, boolean filtered) {
         if (word.isForeign()) {
-            return this.foreignMeanings.get(word.getWord());
+            return this.foreignMeanings.get(word.getWord()).stream().filter(
+                    meaning -> !filtered || meaning.enabled
+            ).collect(Collectors.toList());
         } else {
-            return this.nativeMeanings.get(word.getWord());
+            return this.nativeMeanings.get(word.getWord()).stream().filter(
+                    meaning -> !filtered || meaning.enabled
+            ).collect(Collectors.toList());
         }
     }
 
