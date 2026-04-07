@@ -9,7 +9,7 @@ public class AttemptsHelper {
     }
 
     public static String createDecayedAttempts(String attempts, int count) {
-        return attempts.substring(count) + "0".repeat(count);
+        return attempts.substring(0, attempts.length() - count) + "0".repeat(count);
     }
 
     public static double getSuccess(String attempts) {
