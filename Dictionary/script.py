@@ -35,7 +35,7 @@ def create_dictionary_json():
     dictionary = {}
     for word_info in raw_dictionary:
         foreign = word_info[FOREIGN_KEY]
-        native_set = {}
+        native_set = {} if foreign not in dictionary else dictionary[foreign]
         for native_word in [w.strip() for w in word_info[NATIVE_KEY].split(";")]:
             gender = 0
             article = word_info[ARTICLE_KEY]
