@@ -14,27 +14,27 @@ public class Meaning {
     public String nativeWord;
     @NonNull
     public String part;
+    public int gender;
     public boolean enabled;
 
     public Meaning(
             @NonNull String foreignWord, @NonNull String nativeWord,
-            @NonNull String part, boolean enabled
+            @NonNull String part, int gender, boolean enabled
     ) {
         this.foreignWord = foreignWord;
         this.nativeWord = nativeWord;
         this.part = part;
+        this.gender = gender;
         this.enabled = enabled;
     }
 
     public Gender getGender() {
-        boolean isMasculine = part.toLowerCase().matches(".*masculine.*");
-        boolean isFeminine = part.toLowerCase().matches(".*feminine.*");
-        if (isMasculine && !isFeminine) {
-            return Gender.MASCULINE;
-        } else if (isFeminine && !isMasculine) {
-            return Gender.FEMININE;
-        } else {
+        if (gender == 0) {
             return Gender.NEUTER;
+        } else if (gender == 1) {
+            return Gender.MASCULINE;
+        } else {
+            return Gender.FEMININE;
         }
     }
 }

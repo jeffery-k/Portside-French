@@ -1,4 +1,4 @@
-package com.example.portside;
+package com.example.portside.util;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -11,34 +11,31 @@ public class WordWrapper {
     private static final double MILLISECONDS_IN_DAYS = 1000.0 * 60 * 60 * 24;
 
 
-    private @Nullable Foreign foreignWord;
-    private @Nullable Native nativeWord;
+    private final @NonNull DictionaryDao dao;
+    private final @Nullable Foreign foreignWord;
+    private final @Nullable Native nativeWord;
 
-    public WordWrapper(@NonNull Foreign foreignWord) {
+    public WordWrapper(@NonNull DictionaryDao dao, @NonNull Foreign foreignWord) {
+        this.dao = dao;
         this.foreignWord = foreignWord;
         this.nativeWord = null;
+        this.update();
     }
 
-    public WordWrapper(@NonNull Native nativeWord) {
+    public WordWrapper(@NonNull DictionaryDao dao, @NonNull Native nativeWord) {
+        this.dao = dao;
         this.nativeWord = nativeWord;
         this.foreignWord = null;
+        this.update();
     }
 
-    public void attempt(DictionaryDao dao, boolean correct) {
+    public void attempt(boolean correct) {
         this.setAttempts(AttemptsHelper.createUpdatedAttempts(getAttempts(), correct));
         this.setModified(System.currentTimeMillis());
-        this.update(dao);
+        this.update();
     }
 
-    public void update(DictionaryDao dao) {
-        if (foreignWord != null) {
-            dao.updateForeign(foreignWord);
-        } else if (nativeWord != null) {
-            dao.updateNative(nativeWord);
-        }
-    }
-
-    public void decay(DictionaryDao dao, double rateOfDecay) {
+    public void decay(double rateOfDecay) {
         double currentSuccess = getSuccess();
         double maxDecay = rateOfDecay * getDaysSinceModified();
         int count;
@@ -60,7 +57,15 @@ public class WordWrapper {
                     ((currentSuccess - getSuccess()) / rateOfDecay) * MILLISECONDS_IN_DAYS
             );
             this.setModified(this.getModified() + decayTime);
-            this.update(dao);
+            this.update();
+        }
+    }
+
+    public void update() {
+        if (foreignWord != null) {
+            dao.updateForeign(foreignWord);
+        } else if (nativeWord != null) {
+            dao.updateNative(nativeWord);
         }
     }
 

@@ -1,4 +1,4 @@
-package com.example.portside;
+package com.example.portside.util;
 
 public class AttemptsHelper {
     private static final double RECENCY_WEIGHT_RATIO = 1.4;

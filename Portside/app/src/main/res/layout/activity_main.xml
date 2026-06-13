@@ -122,7 +122,7 @@
             android:id="@+id/neuter"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
+            android:layout_marginEnd="14dp"
             android:layout_weight="1"
             android:checked="true"
             android:text="Neuter" />
@@ -131,17 +131,17 @@
             android:id="@+id/masculine"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
+            android:layout_marginEnd="14dp"
             android:layout_weight="1"
-            android:text="Masculine" />
+            android:text="Le" />
 
         <RadioButton
             android:id="@+id/feminine"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
+            android:layout_marginEnd="14dp"
             android:layout_weight="1"
-            android:text="Feminine" />
+            android:text="La" />
 
     </RadioGroup>
 

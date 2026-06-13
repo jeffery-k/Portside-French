@@ -1,17 +1,28 @@
 import json
-import xml.etree.ElementTree as ET
 from typing import Any
 from sqlalchemy.orm import Session
 import model
 
+
+# OLD
 WORD_IGNORE = ["prpers"]
 PART_IGNORE = ["Proper noun"]
 
+PART_KEY = "part"
+GENDER_KEY = "gender"
+RAW_DICTIONARY_JSON = "raw_dictionary.json"
+DICTIONARY_JSON = "dictionary.json"
+
+NATIVE_KEY = "english_translation"
+FOREIGN_KEY = "word"
+POS_KEY = "pos"
+ARTICLE_KEY = "article_with_word"
+
 
 def write_json(name: str, value: Any):
-    seen_string = json.dumps(value, indent=4, ensure_ascii=False)
+    json_string = json.dumps(value, indent=4, ensure_ascii=False)
     with open(name, "w", encoding="utf-8") as file:
-        file.write(seen_string)
+        file.write(json_string)
 
 
 def read_json(name: str) -> Any:
@@ -20,72 +31,32 @@ def read_json(name: str) -> Any:
 
 
 def create_dictionary_json():
-    # with open("mock.xml", "r", encoding="utf-8") as dict_file:
-    with open("dictionary.xml", "r", encoding="utf-8") as dict_file:
-        xml_data = dict_file.read()
-    root = ET.fromstring(xml_data)
-    sdefs = root[1]
-    section = root[2]
-
-    parts_of_speech = {}
-    for child in sdefs:
-        if "c" in child.attrib and child.attrib["n"] not in parts_of_speech:
-            parts_of_speech[child.attrib["n"]] = child.attrib["c"]
-
+    raw_dictionary = read_json("raw_dictionary.json")
     dictionary = {}
-    for child in section:
-        word = child[0][0].text
-        translation = child[0][1].text
-        assert word is not None
-        assert translation is not None
-        part_of_speech = None
-        skip = False
+    for word_info in raw_dictionary:
+        foreign = word_info[FOREIGN_KEY]
+        native_set = {}
+        for native_word in [w.strip() for w in word_info[NATIVE_KEY].split(";")]:
+            gender = 0
+            article = word_info[ARTICLE_KEY]
+            article_words = article.lower().split()
+            if "un" in article_words or "le" in article_words:
+                gender = 1
+            elif "une" in article_words or "la" in article_words:
+                gender = 2
+            native_set[native_word] = {
+                PART_KEY: word_info[POS_KEY],
+                GENDER_KEY: gender,
+            }
+        dictionary[foreign] = native_set
 
-        for c in child[0][0]:
-            if c.tag == "b":
-                word += f" {c.tail}"
-            elif c.tag == "s":
-                part = parts_of_speech[c.attrib["n"]]
-                if part == "":
-                    continue
-                if part in PART_IGNORE:
-                    skip = True
-                if not part_of_speech:
-                    part_of_speech = part
-                else:
-                    part_of_speech += f" | {part}"
-            elif c.tag == "g":
-                for c2 in c:
-                    assert c2.tail is not None
-                    word += f" {c2.tail}"
-            else:
-                raise AssertionError("what?")
-
-        for c in child[0][1]:
-            if c.tag == "b":
-                translation += f" {c.tail}"
-            elif c.tag == "g":
-                for c2 in c:
-                    assert c2.tail is not None
-                    translation += f" {c2.tail}"
-            elif c.tag != "s":
-                raise AssertionError("huh?")
-
-        assert part_of_speech is not None
-        if translation in WORD_IGNORE or skip:
-            continue
-
-        if word not in dictionary:
-            dictionary[word] = {}
-        dictionary[word][translation] = part_of_speech
-
-    write_json("dictionary.json", dictionary)
+    write_json(DICTIONARY_JSON, dictionary)
 
 
 def create_db():
     db = model.init_db()
     model.init_tables(db)
-    dictionary_json = read_json("dictionary.json")
+    dictionary_json = read_json(DICTIONARY_JSON)
 
     foreigns = {}
     natives = {}
@@ -98,7 +69,7 @@ def create_db():
         )
         foreigns[foreign_word] = foreign
 
-        for native_word, part in native_set.items():
+        for native_word, details in native_set.items():
             native = model.Native(
                 word=native_word,
                 attempts=default_attempts,
@@ -107,7 +78,8 @@ def create_db():
             meaning = model.Meaning(
                 foreign=foreign_word,
                 native=native_word,
-                part=part,
+                part=details[PART_KEY],
+                gender=details[GENDER_KEY],
                 enabled=1,
             )
             meanings[(foreign_word, native_word)] = meaning

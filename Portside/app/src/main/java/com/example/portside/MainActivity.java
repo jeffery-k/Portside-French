@@ -6,7 +6,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
@@ -18,7 +17,6 @@ import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -33,13 +31,18 @@ import com.example.portside.dictionary.Foreign;
 import com.example.portside.dictionary.Gender;
 import com.example.portside.dictionary.Meaning;
 import com.example.portside.dictionary.Native;
+import com.example.portside.util.AttemptsHelper;
+import com.example.portside.util.WordPool;
+import com.example.portside.util.WordWrapper;
 import com.google.android.material.chip.Chip;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class MainActivity extends AppCompatActivity {
@@ -68,15 +71,14 @@ public class MainActivity extends AppCompatActivity {
     private EditText submissionText;
     private Chip editChip;
 
-    private List<Foreign> allForeigns;
-    private List<Native> allNatives;
-    private List<Meaning> allMeanings;
+    private Map<String, Foreign> foreignMap;
+    private Map<String, Native> nativeMap;
     private Map<String, List<Meaning>> foreignMeanings;
     private Map<String, List<Meaning>> nativeMeanings;
-    private List<Foreign> foreignReserves;
-    private List<Native> nativeReserves;
-    private List<WordWrapper> pool;
+    private List<Meaning> meaningsReserve;
+    private WordPool pool;
     private List<Meaning> matches;
+    private Set<WordWrapper> flushes;
 
     private int wordIndex = 0;
     private int streak = 0;
@@ -90,18 +92,40 @@ public class MainActivity extends AppCompatActivity {
                 getApplicationContext(), DictionaryDatabase.class, "dictionary.db"
         ).createFromAsset("dictionary.db").allowMainThreadQueries().build();
         this.dao = db.dictionaryDao();
-
-        this.allForeigns = dao.getAllForeigns();
-        this.allNatives = dao.getAllNatives();
-        this.allMeanings = dao.getAllMeanings();
+        this.foreignMap = new HashMap<>();
+        this.nativeMap = new HashMap<>();
         this.foreignMeanings = new HashMap<>();
         this.nativeMeanings = new HashMap<>();
-        this.foreignReserves = new ArrayList<>();
-        this.nativeReserves = new ArrayList<>();
-        this.pool = new ArrayList<>();
+        this.meaningsReserve = new ArrayList<>();
+        this.pool = new WordPool();
         this.matches = new ArrayList<>();
+        this.flushes = new HashSet<>();
+
+        List<Foreign> allForeigns = dao.getAllForeigns();
+        List<Native> allNatives = dao.getAllNatives();
+        List<Meaning> allMeanings = dao.getAllMeanings();
+
+        for (Foreign foreignWord : allForeigns) {
+            this.foreignMap.put(foreignWord.word, foreignWord);
+            if (foreignWord.modified != null) {
+                this.pool.add(new WordWrapper(dao, foreignWord));
+            }
+        }
+
+        for (Native nativeWord : allNatives) {
+            this.nativeMap.put(nativeWord.word, nativeWord);
+            if (nativeWord.modified != null) {
+                this.pool.add(new WordWrapper(dao, nativeWord));
+            }
+        }
 
         for (Meaning meaning : allMeanings) {
+            if (
+                    !pool.containsForeign(meaning.foreignWord) &&
+                            !pool.containsNative(meaning.nativeWord)
+            ) {
+                this.meaningsReserve.add(meaning);
+            }
             if (!foreignMeanings.containsKey(meaning.foreignWord)) {
                 foreignMeanings.put(meaning.foreignWord, new ArrayList<>());
             }
@@ -112,24 +136,10 @@ public class MainActivity extends AppCompatActivity {
             nativeMeanings.get(meaning.nativeWord).add(meaning);
         }
 
-        for (Foreign foreignWord : allForeigns) {
-            if (foreignWord.modified != null) {
-                this.pool.add(new WordWrapper(foreignWord));
-            } else {
-                this.foreignReserves.add(foreignWord);
-            }
-        }
-
-        for (Native nativeWord : allNatives) {
-            if (nativeWord.modified != null) {
-                this.pool.add(new WordWrapper(nativeWord));
-            } else {
-                this.nativeReserves.add(nativeWord);
-            }
-        }
-
         while (pool.size() < START_POOL_SIZE) {
-            this.growPool();
+            if (!this.growPool()) {
+                break;
+            }
         }
 
         this.nextView = findViewById(R.id.next);
@@ -145,16 +155,18 @@ public class MainActivity extends AppCompatActivity {
         this.submissionText = findViewById(R.id.submission);
         this.editChip = findViewById(R.id.edit);
 
-        this.submissionText.setOnEditorActionListener((v, actionId, event) -> {
-            if (
-                    actionId == EditorInfo.IME_ACTION_DONE &&
-                            correctView.getVisibility() != View.VISIBLE
-            ) {
-                this.submit(v.getText().toString(), getSelectedGender());
-                return true;
-            }
-            return false;
-        });
+        this.submissionText.setOnEditorActionListener(
+                (v, actionId, event) -> {
+                    if (
+                            actionId == EditorInfo.IME_ACTION_DONE &&
+                                    correctView.getVisibility() != View.VISIBLE
+                    ) {
+                        this.submit(v.getText().toString(), getSelectedGender());
+                        return true;
+                    }
+                    return false;
+                }
+        );
         this.submissionText.setOnFocusChangeListener(
                 (v, hasFocus) -> {
                     if (hasFocus) {
@@ -191,9 +203,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setup() {
-        this.pool = this.pool.stream().filter(
-                wordWrapper -> !getWordMeanings(wordWrapper).isEmpty()
-        ).collect(Collectors.toList());
+        // Handling meaninglessness
+        for (WordWrapper wordWrapper : flushes) {
+            this.pool.remove(wordWrapper);
+        }
+        this.flushes.clear();
+
         while (getConfidence() >= CONFIDENCE_GROWTH_THRESHOLD) {
             if (!this.growPool()) {
                 break;
@@ -294,6 +309,12 @@ public class MainActivity extends AppCompatActivity {
                         (buttonView, isChecked) -> {
                             meaning.enabled = isChecked;
                             dao.updateMeaning(meaning);
+                            if (meanings.stream().noneMatch((m) -> m.enabled)) {
+                                this.flushes.add(word);
+                            } else {
+                                // in case we were about to flush it (toggled all off then one on)
+                                this.flushes.remove(word);
+                            }
                         }
                 );
                 TextView paddingText = new TextView(this);
@@ -314,7 +335,7 @@ public class MainActivity extends AppCompatActivity {
         }
         this.history = AttemptsHelper.createUpdatedAttempts(history, correct);
 
-        this.pool.get(wordIndex).attempt(dao, correct);
+        this.pool.get(wordIndex).attempt(correct);
         if (!correct) {
             int moveIndex = (
                     wordIndex +
@@ -323,9 +344,8 @@ public class MainActivity extends AppCompatActivity {
                             ) +
                             INCORRECT_SHIFT_MINIMUM
             );
-            moveIndex = Math.min(moveIndex, pool.size());
-            this.pool.add(moveIndex, pool.get(wordIndex));
-            this.pool.remove(wordIndex);
+            moveIndex = Math.min(moveIndex, pool.size() - 1);
+            this.pool.move(wordIndex, moveIndex);
         } else {
             this.wordIndex = (wordIndex + 1) % this.pool.size();
         }
@@ -379,7 +399,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void reorder() {
         this.pool.forEach(wordWrapper -> {
-            wordWrapper.decay(dao, CONFIDENCE_DAILY_DECAY / this.pool.size());
+            wordWrapper.decay(CONFIDENCE_DAILY_DECAY / this.pool.size());
         });
         this.pool.sort(
                 (word1, word2) ->
@@ -395,68 +415,82 @@ public class MainActivity extends AppCompatActivity {
         this.reorderCount = (reorderCount + 1) % (Long.MAX_VALUE - 1);
     }
 
+    // Attempts to add a single valid word to the pool.
+    // Will add all words with a meaning connection to the first word.
     private boolean growPool() {
-        boolean grown = false;
-        Random random = new Random();
+        List<String> newForeigns = new ArrayList<>();
+        List<String> newNatives = new ArrayList<>();
 
-        if (!foreignReserves.isEmpty()) {
-            int foreignIndex = random.nextInt(foreignReserves.size());
-            Foreign foreignWord = foreignReserves.get(foreignIndex);
-            foreignReserves.remove(foreignIndex);
-            WordWrapper newWord = new WordWrapper(foreignWord);
-            this.pool.add(newWord);
-            grown = true;
+        if (meaningsReserve.isEmpty()) {
+            return false;
+        }
+        int newMeaningIndex = (new Random()).nextInt(meaningsReserve.size());
+        Meaning newMeaning = meaningsReserve.get(newMeaningIndex);
+        meaningsReserve.remove(newMeaningIndex);
+        toastMeaning(newMeaning);
 
-            List<Meaning> meanings = getWordMeanings(newWord);
-            StringBuilder meaningsString = new StringBuilder();
-            for (int i = 0; i < meanings.size(); i++) {
-                Meaning meaning = meanings.get(i);
-                meaningsString.
-                        append(" ").
-                        append(meaning.nativeWord).
-                        append(" (").
-                        append(meaning.getGender().getShortHand()).
-                        append(i < meanings.size() - 1 ? ")," : ")");
+        newForeigns.add(newMeaning.foreignWord);
+        newNatives.add(newMeaning.nativeWord);
+        Set<Meaning> newMeanings = new HashSet<>();
+
+        while (!newForeigns.isEmpty() && !newNatives.isEmpty()) {
+            for (String foreignWordString : newForeigns) {
+                if (this.pool.containsForeign(foreignWordString)) {
+                    continue;
+                }
+                Foreign foreignWord = foreignMap.get(foreignWordString);
+                assert foreignWord != null;
+                this.pool.add(new WordWrapper(dao, foreignWord));
+
+                List<Meaning> meanings = foreignMeanings.get(foreignWordString);
+                assert meanings != null;
+                for (Meaning meaning : meanings) {
+                    if (meaningsReserve.contains(meaning)) {
+                        meaningsReserve.remove(meaning);
+                        newMeanings.add(meaning);
+                    }
+                }
             }
 
-            Toast.makeText(
-                    this,
-                    foreignWord.word + " (fr.) -" + meaningsString,
-                    Toast.LENGTH_LONG
-            ).show();
-        }
+            for (String nativeWordString : newNatives) {
+                if (this.pool.containsNative(nativeWordString)) {
+                    continue;
+                }
+                Native nativeWord = nativeMap.get(nativeWordString);
+                assert nativeWord != null;
+                this.pool.add(new WordWrapper(dao, nativeWord));
 
-        if (!nativeReserves.isEmpty()) {
-            int nativeIndex = random.nextInt(nativeReserves.size());
-            Native nativeWord = nativeReserves.get(nativeIndex);
-            nativeReserves.remove(nativeIndex);
-            WordWrapper newWord = new WordWrapper(nativeWord);
-            this.pool.add(newWord);
-            grown = true;
-
-            List<Meaning> meanings = getWordMeanings(newWord);
-            StringBuilder meaningsString = new StringBuilder();
-            for (int i = 0; i < meanings.size(); i++) {
-                Meaning meaning = meanings.get(i);
-                meaningsString.
-                        append(" ").
-                        append(meaning.foreignWord).
-                        append(" (").
-                        append(meaning.getGender().getShortHand()).
-                        append(i < meanings.size() - 1 ? ")," : ")");
+                List<Meaning> meanings = nativeMeanings.get(nativeWordString);
+                assert meanings != null;
+                for (Meaning meaning : meanings) {
+                    if (meaningsReserve.contains(meaning)) {
+                        meaningsReserve.remove(meaning);
+                        newMeanings.add(meaning);
+                    }
+                }
             }
 
-            Toast.makeText(
-                    this,
-                    nativeWord.word + " (en.) -" + meaningsString,
-                    Toast.LENGTH_LONG
-            ).show();
+            newForeigns.clear();
+            newNatives.clear();
+            for (Meaning meaning : newMeanings) {
+                newForeigns.add(meaning.foreignWord);
+                newNatives.add(meaning.nativeWord);
+                toastMeaning(meaning);
+            }
+            newMeanings.clear();
         }
 
-        if (grown) {
-            this.reorder();
-        }
-        return grown;
+        this.reorder();
+        return true;
+    }
+
+    private void toastMeaning(Meaning meaning) {
+        Toast.makeText(
+                this,
+                meaning.foreignWord + " (" + meaning.getGender().getShortHand() + ") - "
+                        + meaning.nativeWord,
+                Toast.LENGTH_SHORT
+        ).show();
     }
 
     private Gender getSelectedGender() {
