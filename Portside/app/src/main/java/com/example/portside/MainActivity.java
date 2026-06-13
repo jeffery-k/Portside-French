@@ -294,7 +294,9 @@ public class MainActivity extends AppCompatActivity {
         for (Meaning meaning : meanings) {
             TextView meaningText = new TextView(this);
             String translation = word.isForeign() ? meaning.nativeWord : meaning.foreignWord;
-            translation += " | " + meaning.part;
+            Gender gender = meaning.getGender();
+            translation += " | " + meaning.part +
+                    (gender == Gender.NEUTER ? "" : " " + gender.name().toLowerCase());
             meaningText.setText(translation);
             meaningText.setTextSize(18);
             meaningText.setPadding(4, 4, 12, 12);
