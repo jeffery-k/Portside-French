@@ -46,11 +46,12 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class MainActivity extends AppCompatActivity {
-    private static final int START_POOL_SIZE = 20;
+    private static final int START_POOL_SIZE = 12;
     private static final double REORDER_POWER_SCALE = 0.7;
     private static final double CONFIDENCE_DAILY_DECAY = 1;
     private static final double CONFIDENCE_GROWTH_THRESHOLD = .8;
     private static final double CONFIDENCE_RANDOMNESS = 1;
+    private static final double MIN_TO_BIN_THRESHOLD = 0.05;
     private static final int INCORRECT_SHIFT_MINIMUM = 5;
     private static final int INCORRECT_SHIFT_MAXIMUM = 10;
     private static final int CORRECT_COLOR = Color.rgb(10, 120, 40);
@@ -79,6 +80,7 @@ public class MainActivity extends AppCompatActivity {
     private WordPool pool;
     private List<Meaning> matches;
     private Set<WordWrapper> flushes;
+    private WordPool debt;
 
     private int wordIndex = 0;
     private int streak = 0;
@@ -100,6 +102,7 @@ public class MainActivity extends AppCompatActivity {
         this.pool = new WordPool();
         this.matches = new ArrayList<>();
         this.flushes = new HashSet<>();
+        this.debt = new WordPool();
 
         List<Foreign> allForeigns = dao.getAllForeigns();
         List<Native> allNatives = dao.getAllNatives();
@@ -108,14 +111,24 @@ public class MainActivity extends AppCompatActivity {
         for (Foreign foreignWord : allForeigns) {
             this.foreignMap.put(foreignWord.word, foreignWord);
             if (foreignWord.modified != null) {
-                this.pool.add(new WordWrapper(dao, foreignWord));
+                WordWrapper foreignWrapper = new WordWrapper(dao, foreignWord);
+                if (foreignWrapper.getSuccess() > MIN_TO_BIN_THRESHOLD) {
+                    this.pool.add(foreignWrapper);
+                } else {
+                    this.debt.add(foreignWrapper);
+                }
             }
         }
 
         for (Native nativeWord : allNatives) {
             this.nativeMap.put(nativeWord.word, nativeWord);
             if (nativeWord.modified != null) {
-                this.pool.add(new WordWrapper(dao, nativeWord));
+                WordWrapper nativeWrapper = new WordWrapper(dao, nativeWord);
+                if (nativeWrapper.getSuccess() > MIN_TO_BIN_THRESHOLD) {
+                    this.pool.add(nativeWrapper);
+                } else {
+                    this.debt.add(nativeWrapper);
+                };
             }
         }
 
@@ -415,9 +428,29 @@ public class MainActivity extends AppCompatActivity {
         this.reorderCount = (reorderCount + 1) % (Long.MAX_VALUE - 1);
     }
 
-    // Attempts to add a single valid word to the pool.
-    // Will add all words with a meaning connection to the first word.
     private boolean growPool() {
+        WordWrapper newWord = null;
+        while(newWord == null) {
+            if (debt.isEmpty()) {
+                if (!this.growDebt()) {
+                    return false;
+                }
+            }
+            newWord = debt.remove((new Random()).nextInt(debt.size()));
+            if (!pool.contains(newWord)) {
+                newWord.updateModified();
+                for (Meaning meaning : getWordMeanings(newWord)) {
+                    toastMeaning(meaning);
+                }
+                pool.add(newWord);
+            } else {
+                newWord = null;
+            }
+        }
+        return true;
+    }
+
+    private boolean growDebt() {
         List<String> newForeigns = new ArrayList<>();
         List<String> newNatives = new ArrayList<>();
 
@@ -427,7 +460,6 @@ public class MainActivity extends AppCompatActivity {
         int newMeaningIndex = (new Random()).nextInt(meaningsReserve.size());
         Meaning newMeaning = meaningsReserve.get(newMeaningIndex);
         meaningsReserve.remove(newMeaningIndex);
-        toastMeaning(newMeaning);
 
         newForeigns.add(newMeaning.foreignWord);
         newNatives.add(newMeaning.nativeWord);
@@ -435,12 +467,17 @@ public class MainActivity extends AppCompatActivity {
 
         while (!newForeigns.isEmpty() && !newNatives.isEmpty()) {
             for (String foreignWordString : newForeigns) {
-                if (this.pool.containsForeign(foreignWordString)) {
+                if (
+                        this.debt.containsForeign(foreignWordString) ||
+                        this.pool.containsForeign(foreignWordString)
+                ) {
                     continue;
                 }
                 Foreign foreignWord = foreignMap.get(foreignWordString);
                 assert foreignWord != null;
-                this.pool.add(new WordWrapper(dao, foreignWord));
+                WordWrapper foreignWrapper = new WordWrapper(dao, foreignWord);
+                foreignWrapper.updateModified();
+                this.debt.add(foreignWrapper);
 
                 List<Meaning> meanings = foreignMeanings.get(foreignWordString);
                 assert meanings != null;
@@ -453,12 +490,17 @@ public class MainActivity extends AppCompatActivity {
             }
 
             for (String nativeWordString : newNatives) {
-                if (this.pool.containsNative(nativeWordString)) {
+                if (
+                        this.debt.containsNative(nativeWordString) ||
+                        this.pool.containsNative(nativeWordString)
+                ) {
                     continue;
                 }
                 Native nativeWord = nativeMap.get(nativeWordString);
                 assert nativeWord != null;
-                this.pool.add(new WordWrapper(dao, nativeWord));
+                WordWrapper nativeWrapper = new WordWrapper(dao, nativeWord);
+                nativeWrapper.updateModified();
+                this.debt.add(nativeWrapper);
 
                 List<Meaning> meanings = nativeMeanings.get(nativeWordString);
                 assert meanings != null;
@@ -475,7 +517,6 @@ public class MainActivity extends AppCompatActivity {
             for (Meaning meaning : newMeanings) {
                 newForeigns.add(meaning.foreignWord);
                 newNatives.add(meaning.nativeWord);
-                toastMeaning(meaning);
             }
             newMeanings.clear();
         }

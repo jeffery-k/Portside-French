@@ -30,6 +30,12 @@ public class WordPool implements Iterable<WordWrapper> {
         return this.foreigns.contains(word);
     }
 
+    public boolean contains(WordWrapper wordWrapper) {
+        return wordWrapper.isForeign() ?
+                containsForeign(wordWrapper.getWord()) :
+                containsNative(wordWrapper.getWord());
+    }
+
     public WordWrapper get(int index) {
         return this.pool.get(index);
     }
@@ -57,8 +63,18 @@ public class WordPool implements Iterable<WordWrapper> {
         (wordWrapper.isForeign() ? this.foreigns : this.natives).remove(wordWrapper.getWord());
     }
 
+    public WordWrapper remove(int index) {
+        WordWrapper wordWrapper = this.pool.remove(index);
+        (wordWrapper.isForeign() ? this.foreigns : this.natives).remove(wordWrapper.getWord());
+        return wordWrapper;
+    }
+
     public int size() {
         return this.pool.size();
+    }
+
+    public boolean isEmpty() {
+        return this.pool.isEmpty();
     }
 
     public void sort(@Nullable Comparator<? super WordWrapper> c) {

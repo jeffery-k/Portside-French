@@ -106,6 +106,11 @@ public class WordWrapper {
         }
     }
 
+    public void updateModified() {
+        this.setModified(System.currentTimeMillis());
+        this.update();
+    }
+
     public boolean isForeign() {
         return foreignWord != null;
     }
