@@ -1,4 +1,5 @@
 import json
+import re
 from typing import Any
 from sqlalchemy.orm import Session
 import model
@@ -34,9 +35,13 @@ def create_dictionary_json():
     raw_dictionary = read_json("raw_dictionary.json")
     dictionary = {}
     for word_info in raw_dictionary:
-        foreign = word_info[FOREIGN_KEY].lower()
+        foreign = word_info[FOREIGN_KEY].lower().strip()
+        raw_translation = word_info[NATIVE_KEY].lower()
+        if any([foreign in t for t in re.findall("\\([^)]*\\)", raw_translation)]):
+            # access (often in phrases like 'd'abord')   <- terrorist dataset
+            continue
         native_set = {} if foreign not in dictionary else dictionary[foreign]
-        for native_word in break_up_words(word_info[NATIVE_KEY]):
+        for native_word in break_up_words(raw_translation):
             gender = 0
             article = word_info[ARTICLE_KEY]
             article_words = article.lower().split()
@@ -57,7 +62,7 @@ def break_up_words(chunk: str) -> list[str]:
     words = [""]
     word_index = 0
     in_parentheses = 0
-    for c in chunk.lower():
+    for c in chunk:
         if in_parentheses <= 0 and c == ";":
             words.append("")
             word_index += 1
