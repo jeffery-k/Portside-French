@@ -34,9 +34,9 @@ def create_dictionary_json():
     raw_dictionary = read_json("raw_dictionary.json")
     dictionary = {}
     for word_info in raw_dictionary:
-        foreign = word_info[FOREIGN_KEY]
+        foreign = word_info[FOREIGN_KEY].lower()
         native_set = {} if foreign not in dictionary else dictionary[foreign]
-        for native_word in [w.strip() for w in word_info[NATIVE_KEY].split(";")]:
+        for native_word in break_up_words(word_info[NATIVE_KEY]):
             gender = 0
             article = word_info[ARTICLE_KEY]
             article_words = article.lower().split()
@@ -51,6 +51,25 @@ def create_dictionary_json():
         dictionary[foreign] = native_set
 
     write_json(DICTIONARY_JSON, dictionary)
+
+
+def break_up_words(chunk: str) -> list[str]:
+    words = [""]
+    word_index = 0
+    in_parentheses = 0
+    for c in chunk.lower():
+        if in_parentheses <= 0 and c == ";":
+            words.append("")
+            word_index += 1
+            continue
+        elif c == "(":
+            in_parentheses += 1
+        elif c == ")":
+            in_parentheses -= 1
+
+        words[word_index] += c
+
+    return [w.strip() for w in words]
 
 
 def create_db():

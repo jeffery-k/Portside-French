@@ -378,10 +378,7 @@ public class MainActivity extends AppCompatActivity {
         Meaning match = null;
         for (Meaning meaning : meanings) {
             String translation = isForeign ? meaning.nativeWord : meaning.foreignWord;
-            if (
-                    translation.trim().equalsIgnoreCase(submission.trim()) &&
-                            meaning.getGender() == gender
-            ) {
+            if (compareWords(translation, submission) && meaning.getGender() == gender) {
                 match = meaning;
                 break;
             }
@@ -410,6 +407,12 @@ public class MainActivity extends AppCompatActivity {
         }
 
         this.submissionText.setText("");
+    }
+
+    private boolean compareWords(String word, String submission) {
+        word = word.replaceAll("\\(.*\\)", "").trim().toLowerCase();
+        submission = submission.replaceAll("\\(.*\\)", "").trim().toLowerCase();
+        return word.equals(submission);
     }
 
     private void reorder() {
