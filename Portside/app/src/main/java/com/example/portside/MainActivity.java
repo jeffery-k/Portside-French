@@ -452,6 +452,8 @@ public class MainActivity extends AppCompatActivity {
                 newWord = null;
             }
         }
+
+        this.reorder();
         return true;
     }
 
@@ -526,7 +528,6 @@ public class MainActivity extends AppCompatActivity {
             newMeanings.clear();
         }
 
-        this.reorder();
         return true;
     }
 
