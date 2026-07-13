@@ -54,6 +54,8 @@ public class MainActivity extends AppCompatActivity {
     private static final double MIN_TO_BIN_THRESHOLD = 0.05;
     private static final int INCORRECT_SHIFT_MINIMUM = 5;
     private static final int INCORRECT_SHIFT_MAXIMUM = 10;
+    private static final int NATIVE_COLOR = Color.rgb(150, 150, 40);
+    private static final int FOREIGN_COLOR = Color.rgb(10, 40, 120);
     private static final int CORRECT_COLOR = Color.rgb(10, 120, 40);
     private static final int INCORRECT_COLOR = Color.rgb(120, 10, 40);
 
@@ -251,7 +253,12 @@ public class MainActivity extends AppCompatActivity {
 
         WordWrapper word = this.pool.get(wordIndex);
         String languageIndicator = word.isForeign() ? "(fr.)" : "(en.)";
-        this.wordView.setText(String.format("%s\n%s", word.getWord(), languageIndicator));
+        this.wordView.setText(String.format("   %s   \n%s", word.getWord(), languageIndicator));
+        if (!word.isForeign()) {
+            this.wordView.setBackgroundColor(NATIVE_COLOR);
+        } else {
+            this.wordView.setBackgroundColor(FOREIGN_COLOR);
+        }
 
         this.submissionText.requestFocus();
     }
@@ -265,10 +272,10 @@ public class MainActivity extends AppCompatActivity {
 
         boolean correct = getWordMeanings().size() == matches.size();
         if (correct) {
-            this.correctView.setText("Correct!");
+            this.correctView.setText("   Correct!   ");
             this.correctView.setBackgroundColor(CORRECT_COLOR);
         } else {
-            this.correctView.setText("Wrong");
+            this.correctView.setText("   Wrong   ");
             this.correctView.setBackgroundColor(INCORRECT_COLOR);
         }
         updateTranslationsLayout();
@@ -410,9 +417,19 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private boolean compareWords(String word, String submission) {
+        return cleanWord(word).equals(cleanWord(submission));
+    }
+
+    private String cleanWord(String word) {
         word = word.replaceAll("\\(.*\\)", "").trim().toLowerCase();
-        submission = submission.replaceAll("\\(.*\\)", "").trim().toLowerCase();
-        return word.equals(submission);
+        if (word.length() > 2) {
+            word = word.replaceAll("^to ", "");
+        }
+        return word.replaceAll(
+                "\\s+", ""
+        ).replaceAll(
+                "[-–—]", ""
+        );
     }
 
     private void reorder() {
@@ -442,9 +459,10 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
             newWord = debt.remove((new Random()).nextInt(debt.size()));
-            if (!pool.contains(newWord)) {
+            List<Meaning> meanings = getWordMeanings(newWord);
+            if (!pool.contains(newWord) && !meanings.isEmpty()) {
                 newWord.updateModified();
-                for (Meaning meaning : getWordMeanings(newWord)) {
+                for (Meaning meaning : meanings) {
                     toastMeaning(meaning);
                 }
                 pool.add(newWord);
