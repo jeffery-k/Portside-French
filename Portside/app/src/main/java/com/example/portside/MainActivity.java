@@ -81,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
     private List<Meaning> meaningsReserve;
     private WordPool pool;
     private List<Meaning> matches;
-    private Set<WordWrapper> flushes;
+    private boolean needsFlush;
     private WordPool debt;
 
     private int wordIndex = 0;
@@ -103,7 +103,7 @@ public class MainActivity extends AppCompatActivity {
         this.meaningsReserve = new ArrayList<>();
         this.pool = new WordPool();
         this.matches = new ArrayList<>();
-        this.flushes = new HashSet<>();
+        this.needsFlush = false;
         this.debt = new WordPool();
 
         List<Foreign> allForeigns = dao.getAllForeigns();
@@ -130,7 +130,7 @@ public class MainActivity extends AppCompatActivity {
                     this.pool.add(nativeWrapper);
                 } else {
                     this.debt.add(nativeWrapper);
-                };
+                }
             }
         }
 
@@ -209,9 +209,9 @@ public class MainActivity extends AppCompatActivity {
                 }
         );
 
-        this.editChip.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            updateTranslationsLayout();
-        });
+        this.editChip.setOnCheckedChangeListener(
+                (buttonView, isChecked) -> updateTranslationsLayout()
+        );
 
         this.reorder();
         this.setup();
@@ -219,10 +219,18 @@ public class MainActivity extends AppCompatActivity {
 
     private void setup() {
         // Handling meaninglessness
-        for (WordWrapper wordWrapper : flushes) {
-            this.pool.remove(wordWrapper);
+        if (needsFlush) {
+            Set<WordWrapper> flush = new HashSet<>();
+            for (WordWrapper word : pool) {
+                if (getWordMeanings(word).isEmpty()) {
+                    flush.add(word);
+                }
+            }
+            for (WordWrapper word : flush) {
+                this.pool.remove(word);
+            }
+            this.needsFlush = false;
         }
-        this.flushes.clear();
 
         while (getConfidence() >= CONFIDENCE_GROWTH_THRESHOLD) {
             if (!this.growPool()) {
@@ -331,11 +339,8 @@ public class MainActivity extends AppCompatActivity {
                         (buttonView, isChecked) -> {
                             meaning.enabled = isChecked;
                             dao.updateMeaning(meaning);
-                            if (meanings.stream().noneMatch((m) -> m.enabled)) {
-                                this.flushes.add(word);
-                            } else {
-                                // in case we were about to flush it (toggled all off then one on)
-                                this.flushes.remove(word);
+                            if (!isChecked) {
+                                this.needsFlush = true;
                             }
                         }
                 );
@@ -452,7 +457,7 @@ public class MainActivity extends AppCompatActivity {
 
     private boolean growPool() {
         WordWrapper newWord = null;
-        while(newWord == null) {
+        while (newWord == null) {
             if (debt.isEmpty()) {
                 if (!this.growDebt()) {
                     return false;
@@ -494,7 +499,7 @@ public class MainActivity extends AppCompatActivity {
             for (String foreignWordString : newForeigns) {
                 if (
                         this.debt.containsForeign(foreignWordString) ||
-                        this.pool.containsForeign(foreignWordString)
+                                this.pool.containsForeign(foreignWordString)
                 ) {
                     continue;
                 }
@@ -517,7 +522,7 @@ public class MainActivity extends AppCompatActivity {
             for (String nativeWordString : newNatives) {
                 if (
                         this.debt.containsNative(nativeWordString) ||
-                        this.pool.containsNative(nativeWordString)
+                                this.pool.containsNative(nativeWordString)
                 ) {
                     continue;
                 }

@@ -32,7 +32,7 @@ def read_json(name: str) -> Any:
 
 
 def create_dictionary_json():
-    raw_dictionary = read_json("raw_dictionary.json")
+    raw_dictionary = read_json(RAW_DICTIONARY_JSON)
     dictionary = {}
     for word_info in raw_dictionary:
         foreign = word_info[FOREIGN_KEY].lower().strip()
