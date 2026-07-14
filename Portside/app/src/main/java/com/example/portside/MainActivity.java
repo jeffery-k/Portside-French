@@ -581,6 +581,9 @@ public class MainActivity extends AppCompatActivity {
             totalConfidence += getConfidence(word, false) * weight;
             totalWeight += weight;
         }
+        if (totalWeight == 0) {
+            return 1;
+        }
         return totalConfidence / totalWeight;
     }
 
