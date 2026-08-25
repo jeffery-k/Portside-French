@@ -15,16 +15,18 @@ public class Meaning {
     @NonNull
     public String part;
     public int gender;
+    public int frequency;
     public boolean enabled;
 
     public Meaning(
             @NonNull String foreignWord, @NonNull String nativeWord,
-            @NonNull String part, int gender, boolean enabled
+            @NonNull String part, int gender, int frequency, boolean enabled
     ) {
         this.foreignWord = foreignWord;
         this.nativeWord = nativeWord;
         this.part = part;
         this.gender = gender;
+        this.frequency= frequency;
         this.enabled = enabled;
     }
 

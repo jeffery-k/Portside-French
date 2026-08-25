@@ -11,6 +11,7 @@ PART_IGNORE = ["Proper noun"]
 
 PART_KEY = "part"
 GENDER_KEY = "gender"
+FREQUENCY_KEY = "frequency"
 RAW_DICTIONARY_JSON = "raw_dictionary.json"
 DICTIONARY_JSON = "dictionary.json"
 
@@ -18,6 +19,7 @@ NATIVE_KEY = "english_translation"
 FOREIGN_KEY = "word"
 POS_KEY = "pos"
 ARTICLE_KEY = "article_with_word"
+WORD_FREQUENCY_KEY = "word_frequency"
 
 
 def write_json(name: str, value: Any):
@@ -52,6 +54,7 @@ def create_dictionary_json():
             native_set[native_word] = {
                 PART_KEY: word_info[POS_KEY],
                 GENDER_KEY: gender,
+                FREQUENCY_KEY: word_info[WORD_FREQUENCY_KEY]
             }
         dictionary[foreign] = native_set
 
@@ -104,6 +107,7 @@ def create_db():
                 native=native_word,
                 part=details[PART_KEY],
                 gender=details[GENDER_KEY],
+                frequency=details[FREQUENCY_KEY],
                 enabled=1,
             )
             meanings[(foreign_word, native_word)] = meaning

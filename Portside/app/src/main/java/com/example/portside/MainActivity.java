@@ -37,6 +37,7 @@ import com.example.portside.util.WordWrapper;
 import com.google.android.material.chip.Chip;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -150,6 +151,7 @@ public class MainActivity extends AppCompatActivity {
             }
             nativeMeanings.get(meaning.nativeWord).add(meaning);
         }
+        this.meaningsReserve.sort(Comparator.comparingInt(o -> o.frequency));
 
         while (pool.size() < START_POOL_SIZE) {
             if (!this.growPool()) {
@@ -487,7 +489,8 @@ public class MainActivity extends AppCompatActivity {
         if (meaningsReserve.isEmpty()) {
             return false;
         }
-        int newMeaningIndex = (new Random()).nextInt(meaningsReserve.size());
+//        int newMeaningIndex = (new Random()).nextInt(meaningsReserve.size());
+        int newMeaningIndex = 0;
         Meaning newMeaning = meaningsReserve.get(newMeaningIndex);
         meaningsReserve.remove(newMeaningIndex);
 
