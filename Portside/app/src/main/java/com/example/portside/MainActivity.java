@@ -205,7 +205,7 @@ public class MainActivity extends AppCompatActivity {
                                     correctView.getVisibility() == View.VISIBLE
                     ) {
                         v.performClick();
-                        this.next(getWordMeanings().size() == matches.size());
+                        this.next(isCorrect());
                     }
                     return true;
                 }
@@ -217,6 +217,11 @@ public class MainActivity extends AppCompatActivity {
 
         this.reorder();
         this.setup();
+    }
+
+    private boolean isCorrect() {
+        return !matches.isEmpty();  // lazy
+//        return getWordMeanings().size() == matches.size();
     }
 
     private void setup() {
@@ -280,8 +285,7 @@ public class MainActivity extends AppCompatActivity {
         this.genderGroup.setVisibility(View.INVISIBLE);
         this.submissionText.setVisibility(View.INVISIBLE);
 
-        boolean correct = getWordMeanings().size() == matches.size();
-        if (correct) {
+        if (isCorrect()) {
             this.correctView.setText("   Correct!   ");
             this.correctView.setBackgroundColor(CORRECT_COLOR);
         } else {
@@ -408,8 +412,7 @@ public class MainActivity extends AppCompatActivity {
             if (!matches.contains(match)) {
                 this.matches.add(match);
             }
-
-            if (matches.size() == meanings.size()) {
+            if (isCorrect()) {
                 this.showBack();
             } else {
                 Toast.makeText(
