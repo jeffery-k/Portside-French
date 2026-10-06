@@ -104,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
         this.meaningsReserve = new ArrayList<>();
         this.pool = new WordPool();
         this.matches = new ArrayList<>();
-        this.needsFlush = false;
+        this.needsFlush = true;
         this.debt = new WordPool();
 
         List<Foreign> allForeigns = dao.getAllForeigns();
