@@ -249,13 +249,11 @@ public class MainActivity extends AppCompatActivity {
 
         this.streakView.setText(String.format("Streak: %d", streak));
         this.poolView.setText(String.format("Pool: %d", pool.size()));
-        double confidence = getConfidence();
         this.confidenceView.setText(String.format(
-                "Confidence: %d | %d | %d.%d",
+                "Confidence: %d | %d | %.3f",
                 (int) (getConfidence(this.pool.get(wordIndex), false) * 100),
                 (int) (AttemptsHelper.getSuccess(history) * 100),
-                (int) (confidence * 100),
-                ((int) (confidence * 100000)) % 1000
+                getConfidence() * 100
         ));
 
         this.editChip.setChecked(false);
