@@ -50,7 +50,8 @@ public class MainActivity extends AppCompatActivity {
     private static final int START_POOL_SIZE = 8;
     private static final double REORDER_POWER_SCALE = 0.7;
     private static final double CONFIDENCE_DAILY_DECAY = 1;
-    private static final double CONFIDENCE_GROWTH_THRESHOLD = .8;
+    private static final double CONFIDENCE_GROWTH_THRESHOLD = .5;
+    private static final int DEPTH_TO_BREADTH_RATIO = 9;
     private static final double CONFIDENCE_RANDOMNESS = 1;
     private static final double MIN_TO_BIN_THRESHOLD = 0.05;
     private static final int INCORRECT_SHIFT_MINIMUM = 5;
@@ -79,6 +80,8 @@ public class MainActivity extends AppCompatActivity {
     private Map<String, Native> nativeMap;
     private Map<String, List<Meaning>> foreignMeanings;
     private Map<String, List<Meaning>> nativeMeanings;
+    private Map<String, Integer> foreignFrequencies;
+    private Map<String, Integer> nativeFrequencies;
     private List<Meaning> meaningsReserve;
     private WordPool pool;
     private List<Meaning> matches;
@@ -101,6 +104,8 @@ public class MainActivity extends AppCompatActivity {
         this.nativeMap = new HashMap<>();
         this.foreignMeanings = new HashMap<>();
         this.nativeMeanings = new HashMap<>();
+        this.foreignFrequencies = new HashMap<>();
+        this.nativeFrequencies = new HashMap<>();
         this.meaningsReserve = new ArrayList<>();
         this.pool = new WordPool();
         this.matches = new ArrayList<>();
@@ -142,14 +147,18 @@ public class MainActivity extends AppCompatActivity {
             ) {
                 this.meaningsReserve.add(meaning);
             }
+
             if (!foreignMeanings.containsKey(meaning.foreignWord)) {
                 foreignMeanings.put(meaning.foreignWord, new ArrayList<>());
             }
             foreignMeanings.get(meaning.foreignWord).add(meaning);
+            foreignFrequencies.merge(meaning.foreignWord, meaning.frequency, Math::min);
+
             if (!nativeMeanings.containsKey(meaning.nativeWord)) {
                 nativeMeanings.put(meaning.nativeWord, new ArrayList<>());
             }
             nativeMeanings.get(meaning.nativeWord).add(meaning);
+            nativeFrequencies.merge(meaning.nativeWord, meaning.frequency, Math::min);
         }
         this.meaningsReserve.sort(Comparator.comparingInt(o -> o.frequency));
 
@@ -463,12 +472,13 @@ public class MainActivity extends AppCompatActivity {
     private boolean growPool() {
         WordWrapper newWord = null;
         while (newWord == null) {
-            if (debt.isEmpty()) {
+            if (debt.isEmpty() || (this.pool.size() % (DEPTH_TO_BREADTH_RATIO + 1)) == 0) {
                 if (!this.growDebt()) {
                     return false;
                 }
             }
-            newWord = debt.remove((new Random()).nextInt(debt.size()));
+//            newWord = debt.remove((new Random()).nextInt(debt.size()));
+            newWord = debt.remove(0);
             List<Meaning> meanings = getWordMeanings(newWord);
             if (!pool.contains(newWord) && !meanings.isEmpty()) {
                 newWord.updateModified();
@@ -557,6 +567,7 @@ public class MainActivity extends AppCompatActivity {
             newMeanings.clear();
         }
 
+        this.debt.sort(Comparator.comparingInt(this::getWordFrequency));
         return true;
     }
 
@@ -625,6 +636,14 @@ public class MainActivity extends AppCompatActivity {
             return this.nativeMeanings.get(word.getWord()).stream().filter(
                     meaning -> !filtered || meaning.enabled
             ).collect(Collectors.toList());
+        }
+    }
+
+    private int getWordFrequency(@NonNull WordWrapper word) {
+        if (word.isForeign()) {
+            return this.foreignFrequencies.get(word.getWord());
+        } else {
+            return this.nativeFrequencies.get(word.getWord());
         }
     }
 
