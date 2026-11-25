@@ -569,7 +569,12 @@ public class MainActivity extends AppCompatActivity {
         }
 
         this.debt.sort(Comparator.comparingInt(this::getWordFrequency));
-        return true;
+        // straight filth I know, but c'est la vie
+        if (this.debt.isEmpty()) {
+            return this.growDebt();
+        } else {
+            return true;
+        }
     }
 
     private void toastMeaning(Meaning meaning) {
