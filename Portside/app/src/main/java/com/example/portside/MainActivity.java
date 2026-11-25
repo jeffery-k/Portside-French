@@ -457,13 +457,7 @@ public class MainActivity extends AppCompatActivity {
             wordWrapper.decay(CONFIDENCE_DAILY_DECAY / this.pool.size());
         });
         this.pool.sort(
-                (word1, word2) ->
-                        (int) (
-                                (
-                                        getConfidence(word1, true) -
-                                                getConfidence(word2, true)
-                                ) * 100
-                        )
+                Comparator.comparingDouble(w -> getConfidence(w, true))
         );
         this.wordIndex = 0;
         this.wordsSinceReorder = 0;
