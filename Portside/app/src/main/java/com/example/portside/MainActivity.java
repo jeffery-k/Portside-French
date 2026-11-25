@@ -32,6 +32,7 @@ import com.example.portside.dictionary.Gender;
 import com.example.portside.dictionary.Meaning;
 import com.example.portside.dictionary.Native;
 import com.example.portside.util.AttemptsHelper;
+import com.example.portside.util.ExceptionHandler;
 import com.example.portside.util.WordPool;
 import com.example.portside.util.WordWrapper;
 import com.google.android.material.chip.Chip;
@@ -650,6 +651,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ExceptionHandler.interceptExceptions(this);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
