@@ -590,18 +590,19 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    // We use harmonic mean here to weight low confidence words higher
     private double getConfidence() {
-        double totalConfidence = 0;
-        double totalWeight = 0;
-        for (WordWrapper word : pool) {
-            double weight = getWordMeanings(word).size();
-            totalConfidence += getConfidence(word, false) * weight;
-            totalWeight += weight;
-        }
-        if (totalWeight == 0) {
+        if (this.pool.isEmpty()) {
             return 1;
         }
-        return totalConfidence / totalWeight;
+
+        double totalInverseConfidence = 0;
+        for (WordWrapper word : pool) {
+            totalInverseConfidence += (
+                    1 / Math.max(getConfidence(word, false), MIN_TO_BIN_THRESHOLD)
+            );
+        }
+        return this.pool.size() / Math.max(totalInverseConfidence, MIN_TO_BIN_THRESHOLD);
     }
 
     private double getConfidence(WordWrapper word, boolean randomness) {
